@@ -1,13 +1,17 @@
 package com.gmail.andrewandy.customoregen.generator;
 
 import org.bukkit.Location;
-import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public interface BlockGenerator {
 
-    Block generateBlockAt(Location location);
+    BlockData generateBlockAt(Location location);
+
+    Priority getPriority();
+
+    void setPriority(Priority priority);
 
     boolean isActiveAtLocation(Location location);
 

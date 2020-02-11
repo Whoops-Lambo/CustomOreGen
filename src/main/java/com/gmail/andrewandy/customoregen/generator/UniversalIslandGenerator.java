@@ -1,7 +1,5 @@
-package com.gmail.andrewandy.customoregen.generator.builtins;
+package com.gmail.andrewandy.customoregen.generator;
 
-import com.gmail.andrewandy.customoregen.generator.IslandRegionGenerator;
-import com.gmail.andrewandy.customoregen.generator.Priority;
 import com.gmail.andrewandy.customoregen.util.ItemWrapper;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -12,7 +10,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.BentoBox;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -22,9 +20,10 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Represents an ore generator which only works on a specific island.
+ * Represents a generator which fundamentally is the same as {@link com.gmail.andrewandy.customoregen.generator.builtins.IslandOreGenerator}
+ * but works for all islands.
  */
-public class IslandOreGenerator extends IslandRegionGenerator {
+public class UniversalIslandGenerator extends AbstractGenerator {
 
     private static final Type blockStateChanceType = new TypeToken<Map<String, Integer>>() {
     }.getType();
@@ -33,39 +32,30 @@ public class IslandOreGenerator extends IslandRegionGenerator {
     private Map<int[], String> chanceMap = new HashMap<>();
     private int denominator = 0;
 
-
-    public IslandOreGenerator(UUID generatorID) {
-        super(generatorID);
-        String jsonMapped = getDataSection().getString("BlockStateChances");
-        this.blockStateChances = new GsonBuilder().create().fromJson(jsonMapped, blockStateChanceType);
-        calculateChances();
+    protected UniversalIslandGenerator(int maxLevel, int level) {
+        super(maxLevel, level);
     }
 
-    public IslandOreGenerator(ItemStack itemStack) {
+    protected UniversalIslandGenerator(int maxLevel, int level, Priority priority) {
+        super(maxLevel, level, priority);
+    }
+
+    protected UniversalIslandGenerator(ItemStack itemStack) {
         this(Objects.requireNonNull(itemStack).getItemMeta());
     }
 
-    public IslandOreGenerator(ItemMeta meta) {
+    protected UniversalIslandGenerator(ItemMeta meta) {
         super(meta);
         ItemWrapper wrapper = ItemWrapper.wrap(meta);
         String jsonMapped = wrapper.getString("BlockStateChances");
         this.blockStateChances = new GsonBuilder().create().fromJson(jsonMapped, blockStateChanceType);
     }
 
-    public IslandOreGenerator(Island island, int maxLevel, int level) {
-        super(island, maxLevel, level);
-    }
-
-    public IslandOreGenerator(Island island, int maxLevel, int level, Priority priority) {
-        super(island, maxLevel, level, priority);
-    }
-
-    public IslandOreGenerator(String islandID, int maxLevel, int level) {
-        super(islandID, maxLevel, level);
-    }
-
-    public IslandOreGenerator(String islandID, int maxLevel, int level, Priority priority) {
-        super(islandID, maxLevel, level, priority);
+    public UniversalIslandGenerator(UUID fromID) throws IllegalArgumentException {
+        super(fromID);
+        String jsonMapped = getDataSection().getString("BlockStateChances");
+        this.blockStateChances = new GsonBuilder().create().fromJson(jsonMapped, blockStateChanceType);
+        calculateChances();
     }
 
     private void calculateChances() {
@@ -89,7 +79,7 @@ public class IslandOreGenerator extends IslandRegionGenerator {
      * @param chance The relative chance for the block to be added. See the settings.yml for
      *               an example of this works.
      */
-    public IslandOreGenerator addBlockChance(BlockData block, int chance) {
+    public UniversalIslandGenerator addBlockChance(BlockData block, int chance) {
         if (blockStateChances.containsKey(block.getAsString())) {
             blockStateChances.replace(block.getAsString(), chance);
         } else {
@@ -99,7 +89,7 @@ public class IslandOreGenerator extends IslandRegionGenerator {
         return this;
     }
 
-    public IslandOreGenerator removeBlockChance(BlockData block) {
+    public UniversalIslandGenerator removeBlockChance(BlockData block) {
         blockStateChances.remove(block.getAsString());
         chanceMap.values().remove(block.getAsString());
         calculateChances();
@@ -119,7 +109,6 @@ public class IslandOreGenerator extends IslandRegionGenerator {
         throw new IllegalStateException("Unable to find block data!");
     }
 
-
     @Override
     public BlockData generateBlockAt(Location location) {
         if (!isActiveAtLocation(location)) {
@@ -130,7 +119,8 @@ public class IslandOreGenerator extends IslandRegionGenerator {
 
     @Override
     public boolean isActiveAtLocation(Location location) {
-        return withinRegion(location);
+        //True if an island exists at a given location.
+        return BentoBox.getInstance().getIslands().getIslandAt(location).isPresent();
     }
 
     /**

@@ -23,6 +23,8 @@ public abstract class AbstractGenerator implements BlockGenerator {
     private final UUID generatorID;
     private final int maxLevel;
     private int level;
+    private Priority priority = Priority.NORMAL;
+
     protected AbstractGenerator(int maxLevel, int level) {
         if (level < 1 || level > maxLevel) {
             throw new IllegalArgumentException("Invalid MaxLevel or Level!");
@@ -30,6 +32,11 @@ public abstract class AbstractGenerator implements BlockGenerator {
         this.maxLevel = maxLevel;
         this.level = level;
         this.generatorID = UUID.randomUUID();
+    }
+
+    protected AbstractGenerator(int maxLevel, int level, Priority priority) {
+        this(maxLevel, level);
+        this.priority = Objects.requireNonNull(priority);
     }
 
     protected AbstractGenerator(ItemStack itemStack) {
@@ -42,6 +49,7 @@ public abstract class AbstractGenerator implements BlockGenerator {
         try {
             this.level = wrapper.getInt("Level");
             this.maxLevel = wrapper.getInt("MaxLevel");
+            this.priority = Priority.valueOf(wrapper.getString("Priority"));
             if (level > maxLevel || level < 1) {
                 throw new IllegalStateException("Invalid Spawner params detected when deserialising from ItemMeta!");
             }
@@ -74,6 +82,16 @@ public abstract class AbstractGenerator implements BlockGenerator {
 
     public static void setDataFile(File file) {
         saveFile = Objects.requireNonNull(file);
+    }
+
+    @Override
+    public Priority getPriority() {
+        return priority;
+    }
+
+    @Override
+    public void setPriority(Priority priority) {
+        this.priority = Objects.requireNonNull(priority);
     }
 
     public UUID getGeneratorID() {
@@ -166,6 +184,7 @@ public abstract class AbstractGenerator implements BlockGenerator {
         section.set("Level", level);
         section.set("MaxLevel", maxLevel);
         section.set("Class", this.getClass().getName());
+        section.set("Priority", priority.name());
     }
 
 
@@ -183,6 +202,7 @@ public abstract class AbstractGenerator implements BlockGenerator {
         //Mutate the tag container
         wrapper.setString("Class", this.getClass().getCanonicalName())
                 .setString("UUID", generatorID.toString())
+                .setString("Priority", priority.name())
                 .setInt("MaxLevel", maxLevel)
                 .setInt("Level", level);
     }
@@ -206,11 +226,12 @@ public abstract class AbstractGenerator implements BlockGenerator {
         AbstractGenerator generator = (AbstractGenerator) o;
         return level == generator.level &&
                 maxLevel == generator.maxLevel &&
+                priority == generator.priority &&
                 Objects.equals(generatorID, generator.generatorID);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(generatorID, level, maxLevel);
+        return Objects.hash(generatorID, level, maxLevel, priority);
     }
 }

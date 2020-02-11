@@ -1,16 +1,16 @@
 package com.gmail.andrewandy.customoregen;
 
-import be.seeseemelk.mockbukkit.block.BlockMock;
 import be.seeseemelk.mockbukkit.inventory.ItemFactoryMock;
 import com.gmail.andrewandy.customoregen.generator.AbstractGenerator;
 import com.gmail.andrewandy.customoregen.util.ItemWrapper;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,8 +107,8 @@ public class AbstractGeneratorTest {
         }
 
         @Override
-        public Block generateBlockAt(Location location) {
-            return new BlockMock(Material.IRON_ORE, location);
+        public BlockData generateBlockAt(Location location) {
+            return null;
         }
 
         @Override

@@ -113,6 +113,7 @@ public class AbstractGeneratorTest {
         } catch (IllegalArgumentException ex) {
             Assert.fail("Failed to read generator from disk, or values mismatch!");
         }
+        file.deleteOnExit();
     }
 
     @Test()

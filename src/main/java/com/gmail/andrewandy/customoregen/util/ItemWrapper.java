@@ -23,6 +23,7 @@ public class ItemWrapper {
         plugin = Objects.requireNonNull(instance);
     }
 
+
     /**
      * @see #wrap(ItemMeta)
      */
@@ -31,8 +32,8 @@ public class ItemWrapper {
         this.container = meta.getPersistentDataContainer();
     }
 
-    public <T> boolean hasKeyOfType(String key, Class<T> clazz) {
-        return clazz.isInstance(get(key, clazz));
+    public <T> boolean hasKeyOfType(String key, Class<T> clazz, boolean nullValueExpected) {
+        return nullValueExpected && (get(key, clazz) == null);
     }
 
     @SuppressWarnings("unchecked")
@@ -77,8 +78,7 @@ public class ItemWrapper {
 
 
     public int getInt(String key) {
-        Integer value = container.get(getKey(key), PersistentDataType.INTEGER);
-        return value == null ? 0 : value;
+        return container.getOrDefault(getKey(key), PersistentDataType.INTEGER, 0);
     }
 
     public int[] getIntArray(String key) {
@@ -95,8 +95,7 @@ public class ItemWrapper {
     }
 
     public byte getByte(String key) {
-        Byte value = container.get(getKey(key), PersistentDataType.BYTE);
-        return value == null ? 0 : value;
+        return container.getOrDefault(getKey(key), PersistentDataType.BYTE, (byte) 0);
     }
 
     public byte[] getByteArray(String key) {
@@ -113,8 +112,7 @@ public class ItemWrapper {
     }
 
     public long getLong(String key) {
-        Long value = container.get(getKey(key), PersistentDataType.LONG);
-        return value == null ? 0 : value;
+        return container.getOrDefault(getKey(key), PersistentDataType.LONG, 0L);
     }
 
     public long[] getLongArray(String key) {
@@ -127,8 +125,7 @@ public class ItemWrapper {
     }
 
     public float getFloat(String key) {
-        Float value = container.get(getKey(key), PersistentDataType.FLOAT);
-        return value == null ? 0 : value;
+        return container.getOrDefault(getKey(key), PersistentDataType.FLOAT, 0F);
     }
 
     public ItemWrapper setDouble(String key, double value) {
@@ -137,8 +134,7 @@ public class ItemWrapper {
     }
 
     public double getDouble(String key) {
-        Double value = container.get(getKey(key), PersistentDataType.DOUBLE);
-        return value == null ? 0 : value;
+        return container.getOrDefault(getKey(key), PersistentDataType.DOUBLE, 0D);
     }
 
     public ItemWrapper setShort(String key, short value) {
@@ -147,8 +143,7 @@ public class ItemWrapper {
     }
 
     public short getShort(String key) {
-        Short value = container.get(getKey(key), PersistentDataType.SHORT);
-        return value == null ? 0 : value;
+        return container.getOrDefault(getKey(key), PersistentDataType.SHORT, (short) 0);
     }
 
     public ItemWrapper removeKey(String key) {

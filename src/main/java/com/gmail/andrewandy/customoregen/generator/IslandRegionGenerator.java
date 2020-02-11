@@ -2,15 +2,23 @@ package com.gmail.andrewandy.customoregen.generator;
 
 import com.gmail.andrewandy.customoregen.Region;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.objects.Island;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
-public abstract class IslandRegionGenerator extends AbstractGenerator implements BlockGenerator {
+public abstract class IslandRegionGenerator extends AbstractGenerator {
 
     private final String islandID;
+
+    public IslandRegionGenerator(UUID generatorID) {
+        super(generatorID);
+        ConfigurationSection section = getDataSection();
+        islandID = section.getString("IslandID");
+    }
 
     public IslandRegionGenerator(Island island, int maxLevel, int level) {
         this(Objects.requireNonNull(island).getUniqueId(), maxLevel, level);
@@ -40,5 +48,11 @@ public abstract class IslandRegionGenerator extends AbstractGenerator implements
         }
         Island island = optionalIsland.get();
         return new Region(island.getBoundingBox(), island.getWorld()).contains(region);
+    }
+
+    @Override
+    public void save() {
+        super.save();
+        getDataSection().set("IslandID", islandID);
     }
 }

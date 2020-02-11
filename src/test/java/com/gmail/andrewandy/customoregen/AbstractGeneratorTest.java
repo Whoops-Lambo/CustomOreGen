@@ -18,51 +18,6 @@ import java.util.UUID;
 
 public class AbstractGeneratorTest {
 
-    private static class TestGenerator extends AbstractGenerator {
-
-        public TestGenerator(ItemStack fromItem) {
-            super(fromItem);
-        }
-
-        public TestGenerator(ItemMeta fromMeta) {
-            super(fromMeta);
-        }
-
-        protected TestGenerator(int maxLevel, int level) {
-            super(maxLevel, level);
-        }
-
-        public TestGenerator(UUID fromID) throws IllegalArgumentException {
-            super(fromID);
-        }
-
-        @Override
-        public Block generateBlockAt(Location location) {
-            return new BlockMock(Material.IRON_ORE, location);
-        }
-
-        @Override
-        public boolean isActiveAtLocation(Location location) {
-            return true;
-        }
-
-        @Override
-        public ItemStack toItemStack() {
-            return super.toBaseItem(Material.SPAWNER);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            return super.equals(o);
-        }
-
-        @Override
-        public int hashCode() {
-            return super.hashCode();
-        }
-    }
-
-
     @Test()
     public void serialisationTest() {
         //Create a temp data file.
@@ -130,6 +85,50 @@ public class AbstractGeneratorTest {
             new TestGenerator(UUID.randomUUID());
             Assert.fail("Invalid UUID which does not exist was not caught!");
         } catch (IllegalArgumentException ignored) {
+        }
+    }
+
+    private static class TestGenerator extends AbstractGenerator {
+
+        public TestGenerator(ItemStack fromItem) {
+            super(fromItem);
+        }
+
+        public TestGenerator(ItemMeta fromMeta) {
+            super(fromMeta);
+        }
+
+        protected TestGenerator(int maxLevel, int level) {
+            super(maxLevel, level);
+        }
+
+        public TestGenerator(UUID fromID) throws IllegalArgumentException {
+            super(fromID);
+        }
+
+        @Override
+        public Block generateBlockAt(Location location) {
+            return new BlockMock(Material.IRON_ORE, location);
+        }
+
+        @Override
+        public boolean isActiveAtLocation(Location location) {
+            return true;
+        }
+
+        @Override
+        public ItemStack toItemStack() {
+            return super.toBaseItem(Material.SPAWNER);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return super.equals(o);
+        }
+
+        @Override
+        public int hashCode() {
+            return super.hashCode();
         }
     }
 

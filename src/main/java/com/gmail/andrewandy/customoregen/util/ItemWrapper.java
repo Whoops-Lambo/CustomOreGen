@@ -11,18 +11,9 @@ import java.util.Objects;
 
 public class ItemWrapper {
 
+    public static JavaPlugin plugin;
     private final PersistentDataContainer container;
     private volatile ItemMeta meta;
-    public static JavaPlugin plugin;
-
-    private NamespacedKey getKey(String name) {
-        return new NamespacedKey(plugin, name);
-    }
-
-    public static void setPlugin(JavaPlugin instance) {
-        plugin = Objects.requireNonNull(instance);
-    }
-
 
     /**
      * @see #wrap(ItemMeta)
@@ -32,19 +23,8 @@ public class ItemWrapper {
         this.container = meta.getPersistentDataContainer();
     }
 
-    public <T> boolean hasKeyOfType(String key, Class<T> clazz, boolean nullValueExpected) {
-        return nullValueExpected && (get(key, clazz) == null);
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> T get(String key, Class<T> clazz) {
-        if (!isPrimitive(clazz)) {
-            throw new UnsupportedOperationException("Only primitives are supported!");
-        }
-        NamespacedKey namespacedKey = getKey(key);
-        PersistentDataType<?, ?> type = getType(clazz);
-        assert type != null;
-        return (T) container.get(namespacedKey, type);
+    public static void setPlugin(JavaPlugin instance) {
+        plugin = Objects.requireNonNull(instance);
     }
 
     public static ItemWrapper wrap(ItemStack itemStack) {
@@ -56,6 +36,51 @@ public class ItemWrapper {
 
     public static ItemWrapper wrap(ItemMeta meta) {
         return new ItemWrapper(Objects.requireNonNull(meta).clone());
+    }
+
+    private static PersistentDataType<?, ?> getType(Class<?> clazz) {
+        boolean array = clazz.isArray();
+        if (array) {
+            clazz = clazz.getComponentType();
+        }
+        if (clazz == byte.class) {
+            return array ? PersistentDataType.BYTE_ARRAY : PersistentDataType.BYTE;
+        } else if (clazz == short.class) {
+            return PersistentDataType.SHORT;
+        } else if (clazz == float.class) {
+            return PersistentDataType.FLOAT;
+        } else if (clazz == int.class) {
+            return array ? PersistentDataType.INTEGER : PersistentDataType.INTEGER_ARRAY;
+        } else if (clazz == double.class) {
+            return PersistentDataType.DOUBLE;
+        } else if (clazz == long.class) {
+            return array ? PersistentDataType.LONG_ARRAY : PersistentDataType.LONG;
+        } else if (clazz == String.class) {
+            return PersistentDataType.STRING;
+        } else if (PersistentDataContainer.class.isAssignableFrom(clazz)) {
+            return PersistentDataType.TAG_CONTAINER;
+        } else {
+            return null;
+        }
+    }
+
+    private NamespacedKey getKey(String name) {
+        return new NamespacedKey(plugin, name);
+    }
+
+    public <T> boolean hasKeyOfType(String key, Class<T> clazz, boolean nullValueExpected) {
+        return nullValueExpected && (get(key, clazz) == null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T get(String key, Class<T> clazz) {
+        if (!clazz.isPrimitive()) {
+            throw new UnsupportedOperationException("Only primitives are supported!");
+        }
+        NamespacedKey namespacedKey = getKey(key);
+        PersistentDataType<?, ?> type = getType(clazz);
+        assert type != null;
+        return (T) container.get(namespacedKey, type);
     }
 
     public ItemWrapper setString(String key, String value) {
@@ -75,7 +100,6 @@ public class ItemWrapper {
         }
         return this;
     }
-
 
     public int getInt(String key) {
         return container.getOrDefault(getKey(key), PersistentDataType.INTEGER, 0);
@@ -158,36 +182,5 @@ public class ItemWrapper {
 
     public ItemMeta getMeta() {
         return meta.clone();
-    }
-
-    private static PersistentDataType<?, ?> getType(Class<?> clazz) {
-        boolean array = clazz.isArray();
-        if (array) {
-            clazz = clazz.getComponentType();
-        }
-        if (clazz == byte.class) {
-            return array ? PersistentDataType.BYTE_ARRAY : PersistentDataType.BYTE;
-        } else if (clazz == short.class) {
-            return PersistentDataType.SHORT;
-        } else if (clazz == float.class) {
-            return PersistentDataType.FLOAT;
-        } else if (clazz == int.class) {
-            return array ? PersistentDataType.INTEGER : PersistentDataType.INTEGER_ARRAY;
-        } else if (clazz == double.class) {
-            return PersistentDataType.DOUBLE;
-        } else if (clazz == long.class) {
-            return array ? PersistentDataType.LONG_ARRAY : PersistentDataType.LONG;
-        } else if (clazz == String.class) {
-            return PersistentDataType.STRING;
-        } else if (PersistentDataContainer.class.isAssignableFrom(clazz)) {
-            return PersistentDataType.TAG_CONTAINER;
-        } else {
-            return null;
-        }
-    }
-
-    private static boolean isPrimitive(Class<?> clazz) {
-        PersistentDataType<?, ?> type = getType(clazz);
-        return type != null && type != PersistentDataType.TAG_CONTAINER;
     }
 }

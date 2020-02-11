@@ -7,12 +7,16 @@ import java.util.logging.Level;
 
 public class CustomOreGen extends JavaPlugin {
 
-    private static CustomOreGen instance;
     private static final String logPrefix = "&3[CustomOreGen]";
     private static final GeneratorManager generatorManager = new GeneratorManager();
+    private static CustomOreGen instance;
 
     public static GeneratorManager getGeneratorManager() {
         return generatorManager;
+    }
+
+    public static CustomOreGen getInstance() {
+        return instance;
     }
 
     @Override
@@ -27,9 +31,5 @@ public class CustomOreGen extends JavaPlugin {
     public void onDisable() {
         super.onDisable();
         Common.log(Level.INFO, "&e Plugin has been disabled.");
-    }
-
-    public static CustomOreGen getInstance() {
-        return instance;
     }
 }

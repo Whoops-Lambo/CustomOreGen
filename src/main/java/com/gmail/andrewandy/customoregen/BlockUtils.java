@@ -6,7 +6,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_15_R1.CraftChunk;
 import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_15_R1.block.CraftBlockState;
-import org.bukkit.util.BoundingBox;
 
 public class BlockUtils {
 

@@ -18,21 +18,11 @@ import java.util.logging.Level;
 
 public abstract class AbstractGenerator implements BlockGenerator {
 
-    private static File saveFile;
     private static final YamlConfiguration data = new YamlConfiguration();
-
-    public static void setDataFile(File file) {
-        saveFile = Objects.requireNonNull(file);
-    }
-
+    private static File saveFile;
     private final UUID generatorID;
-    private int level;
     private final int maxLevel;
-
-    public UUID getGeneratorID() {
-        return generatorID;
-    }
-
+    private int level;
     protected AbstractGenerator(int maxLevel, int level) {
         if (level < 1 || level > maxLevel) {
             throw new IllegalArgumentException("Invalid MaxLevel or Level!");
@@ -80,6 +70,14 @@ public abstract class AbstractGenerator implements BlockGenerator {
             throw new IllegalArgumentException("Invalid Generator! Level must be positive, AND MaxLevel must be greater or equal to the level!");
         }
         this.generatorID = fromID;
+    }
+
+    public static void setDataFile(File file) {
+        saveFile = Objects.requireNonNull(file);
+    }
+
+    public UUID getGeneratorID() {
+        return generatorID;
     }
 
     /**
@@ -139,16 +137,16 @@ public abstract class AbstractGenerator implements BlockGenerator {
         return level;
     }
 
-    public int getMaxLevel() {
-        return maxLevel;
-    }
-
     @Override
     public void setLevel(int level) {
         if (level > maxLevel || level < 1) {
             throw new IllegalArgumentException("Invalid Level!");
         }
         this.level = level;
+    }
+
+    public int getMaxLevel() {
+        return maxLevel;
     }
 
     @Override

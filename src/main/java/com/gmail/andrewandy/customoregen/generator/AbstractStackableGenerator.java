@@ -13,10 +13,13 @@ import java.util.logging.Level;
 public abstract class AbstractStackableGenerator extends AbstractGenerator implements StackableGenerator {
 
 
+    private Stack<StackedObject<ItemStack>> stack = new Stack<>();
+    private int maxSize = -1;
+
+
     protected AbstractStackableGenerator(int maxLevel, int level) {
         super(maxLevel, level);
     }
-
     public AbstractStackableGenerator(UUID fromID) {
         super(fromID);
         ConfigurationSection section = getDataSection();
@@ -33,10 +36,6 @@ public abstract class AbstractStackableGenerator extends AbstractGenerator imple
             stack.add(i, new StackedObject<>(section.getItemStack(String.valueOf(i))));
         }
     }
-
-
-    private Stack<StackedObject<ItemStack>> stack = new Stack<>();
-    private int maxSize = -1;
 
     public Collection<StackedObject<ItemStack>> getStacked() {
         return new LinkedList<>(stack);

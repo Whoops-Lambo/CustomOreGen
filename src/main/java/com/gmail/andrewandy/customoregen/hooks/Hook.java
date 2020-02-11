@@ -8,6 +8,7 @@ import java.util.Objects;
 public interface Hook extends Comparable<Hook> {
 
     String getTargetPluginName();
+
     default String getName() {
         return getClass().getSimpleName();
     }
@@ -15,8 +16,11 @@ public interface Hook extends Comparable<Hook> {
     default Plugin getPlugin() {
         return Bukkit.getPluginManager().getPlugin(getTargetPluginName());
     }
+
     boolean isEnabled();
+
     void onEnable();
+
     void onDisable();
 
     @Override

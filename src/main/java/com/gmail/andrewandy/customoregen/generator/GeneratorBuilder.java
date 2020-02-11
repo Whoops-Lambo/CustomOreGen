@@ -97,11 +97,6 @@ public class GeneratorBuilder {
         }
 
         @Override
-        public int maxLevel() {
-            return maxLevel;
-        }
-
-        @Override
         public void setLevel(int newLevel) {
             if (newLevel > maxLevel) {
                 throw new IllegalArgumentException("New level cannot be greater than max level!");
@@ -110,6 +105,11 @@ public class GeneratorBuilder {
                 throw new IllegalArgumentException("New level must be greater than 0.");
             }
             this.level = newLevel;
+        }
+
+        @Override
+        public int maxLevel() {
+            return maxLevel;
         }
 
         @Override

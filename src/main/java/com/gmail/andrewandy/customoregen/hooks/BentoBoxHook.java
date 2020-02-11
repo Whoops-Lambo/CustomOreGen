@@ -7,11 +7,6 @@ import java.util.Optional;
 
 public abstract class BentoBoxHook implements Hook {
 
-    @Override
-    public String getTargetPluginName() {
-        return "BentoBox";
-    }
-
     private Addon addon;
 
     protected BentoBoxHook(String targetAddonName) {
@@ -20,6 +15,11 @@ public abstract class BentoBoxHook implements Hook {
         }
         Optional<Addon> optionalAddon = BentoBox.getInstance().getAddonsManager().getAddonByName(targetAddonName);
         this.addon = optionalAddon.orElse(null);
+    }
+
+    @Override
+    public String getTargetPluginName() {
+        return "BentoBox";
     }
 
     public Addon getAddon() {

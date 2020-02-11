@@ -16,6 +16,13 @@ public final class BSkyblockHook extends BentoBoxHook {
         }
     }
 
+    public static BSkyblockHook getInstance() {
+        if (instance == null) {
+            instance = new BSkyblockHook();
+        }
+        return instance;
+    }
+
     @Override
     public void onEnable() {
         getInstance();
@@ -29,12 +36,5 @@ public final class BSkyblockHook extends BentoBoxHook {
     @Override
     public void onDisable() {
         Common.log(Level.INFO, "[Hooks] &eBSkyblock hook has been disabled.");
-    }
-
-    public static BSkyblockHook getInstance() {
-        if (instance == null) {
-            instance = new BSkyblockHook();
-        }
-        return instance;
     }
 }

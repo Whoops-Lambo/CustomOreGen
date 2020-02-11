@@ -7,7 +7,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.platform.commons.annotation.Testable;
 
 public class ItemWrapperTest {
 

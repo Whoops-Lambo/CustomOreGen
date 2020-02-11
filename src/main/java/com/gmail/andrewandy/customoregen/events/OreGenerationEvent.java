@@ -22,6 +22,10 @@ public class OreGenerationEvent extends Event implements Cancellable {
         this.toBlock = Objects.requireNonNull(newBlock);
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     @Override
     public boolean isCancelled() {
         return original.isCancelled();
@@ -32,16 +36,12 @@ public class OreGenerationEvent extends Event implements Cancellable {
         this.original.setCancelled(cancel);
     }
 
-    public void setToBlock(BlockData toBlock) {
-        this.toBlock = toBlock;
-    }
-
     public BlockData getToBlock() {
         return toBlock;
     }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
+    public void setToBlock(BlockData toBlock) {
+        this.toBlock = toBlock;
     }
 
     public HandlerList getHandlers() {

@@ -13,9 +13,9 @@ public interface BlockGenerator {
 
     int getLevel();
 
-    int maxLevel();
-
     void setLevel(int newLevel);
+
+    int maxLevel();
 
     default boolean isMaxed() {
         if (maxLevel() == -1) {

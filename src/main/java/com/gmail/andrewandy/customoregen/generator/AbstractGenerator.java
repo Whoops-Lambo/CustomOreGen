@@ -47,9 +47,18 @@ public abstract class AbstractGenerator implements BlockGenerator {
         Objects.requireNonNull(meta);
         ItemWrapper wrapper = ItemWrapper.wrap(meta);
         try {
-            this.level = wrapper.getInt("Level");
-            this.maxLevel = wrapper.getInt("MaxLevel");
+            Integer level, maxLevel;
+            level = wrapper.get("Level", Integer.class);
+            maxLevel = wrapper.get("MaxLevel", Integer.class);
+            if (level == null || maxLevel == null) {
+                throw new IllegalArgumentException("Level and MaxLevel not found!");
+            }
+            this.level = level;
+            this.maxLevel = maxLevel;
             this.priority = Priority.valueOf(wrapper.getString("Priority"));
+            if (this.priority == null) {
+                throw new IllegalArgumentException("No priority found!");
+            }
             if (level > maxLevel || level < 1) {
                 throw new IllegalStateException("Invalid Spawner params detected when deserialising from ItemMeta!");
             }
@@ -84,6 +93,42 @@ public abstract class AbstractGenerator implements BlockGenerator {
         saveFile = Objects.requireNonNull(file);
     }
 
+    /**
+     * Attempts to reconstruct a generator instance from the data file.
+     *
+     * @param generatorID The id of the instance to reconstruct.
+     * @return Returns a populated optional if the generator exists.
+     * @throws IllegalArgumentException Thrown if the generatorID is null.
+     * @throws IllegalStateException    Thrown if there was an error reconstructing a generator.
+     *                                  This usually occurs if a subclass does not have a constructor which accepts the {@link UUID} class,
+     *                                  such as anonymous classes.
+     */
+    public static Optional<AbstractGenerator> fromID(UUID generatorID) throws IllegalArgumentException, IllegalStateException {
+        Objects.requireNonNull(generatorID);
+        ConfigurationSection section = data.getConfigurationSection("DefaultData");
+        section = section == null ? data.createSection("DefaultData") : section;
+        ConfigurationSection generatorSection = section.getConfigurationSection(generatorID.toString());
+        if (generatorSection == null) {
+            return Optional.empty();
+        }
+        String rawClass = generatorSection.getString("Class");
+        if (rawClass == null) {
+            return Optional.empty();
+        }
+        try {
+            Class<?> unknown = Class.forName(rawClass);
+            if (!AbstractGenerator.class.isAssignableFrom(unknown)) {
+                Common.log(Level.WARNING, "&e[Data] Invalid Generator Detected! Skipping...");
+                return Optional.empty();
+            }
+            Class<? extends AbstractGenerator> clazz = unknown.asSubclass(AbstractGenerator.class);
+            return Optional.of(clazz.getConstructor(UUID.class).newInstance(generatorID));
+        } catch (ReflectiveOperationException ex) {
+            Common.log(Level.SEVERE, "&c[Data] Error occurred when trying to reconstruct a generator!");
+            throw new IllegalStateException(ex);
+        }
+    }
+
     @Override
     public Priority getPriority() {
         return priority;
@@ -112,42 +157,6 @@ public abstract class AbstractGenerator implements BlockGenerator {
             return Optional.of(clazzObj.cast(generator.get()));
         }
         return Optional.empty();
-    }
-
-    /**
-     * Attempts to reconstruct a generator instance from the data file.
-     *
-     * @param generatorID The id of the instance to reconstruct.
-     * @return Returns a populated optional if the generator exists.
-     * @throws IllegalArgumentException Thrown if the generatorID is null.
-     * @throws IllegalStateException    Thrown if there was an error reconstructing a generator.
-     *                                  This usually occurs if a subclass does not have a constructor which accepts the {@link UUID} class,
-     *                                  such as anonymous classes.
-     */
-    public Optional<AbstractGenerator> fromID(UUID generatorID) throws IllegalArgumentException, IllegalStateException {
-        Objects.requireNonNull(generatorID);
-        ConfigurationSection section = data.getConfigurationSection("DefaultData");
-        section = section == null ? data.createSection("DefaultData") : section;
-        ConfigurationSection generatorSection = section.getConfigurationSection(generatorID.toString());
-        if (generatorSection == null) {
-            return Optional.empty();
-        }
-        String rawClass = generatorSection.getString("Class");
-        if (rawClass == null) {
-            return Optional.empty();
-        }
-        try {
-            Class<?> unknown = Class.forName(rawClass);
-            if (!AbstractGenerator.class.isAssignableFrom(unknown)) {
-                Common.log(Level.WARNING, "&e[Data] Invalid Generator Detected! Skipping...");
-                return Optional.empty();
-            }
-            Class<? extends AbstractGenerator> clazz = unknown.asSubclass(AbstractGenerator.class);
-            return Optional.of(clazz.getConstructor(UUID.class).newInstance(generatorID));
-        } catch (ReflectiveOperationException ex) {
-            Common.log(Level.SEVERE, "&c[Data] Error occurred when trying to reconstruct a generator!");
-            throw new IllegalStateException(ex);
-        }
     }
 
     @Override

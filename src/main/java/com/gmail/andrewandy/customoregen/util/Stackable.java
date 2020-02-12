@@ -8,6 +8,8 @@ public interface Stackable<T> {
 
     boolean canStack(StackedObject<T> stackedObject);
 
+    void stack(StackedObject<T> stackedObject);
+
     int maxSize();
 
     default int size() {

@@ -10,6 +10,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,8 +19,8 @@ import java.util.UUID;
 
 public class AbstractGeneratorTest {
 
-    @Test()
-    public void serialisationTest() {
+    @BeforeAll
+    public static void setupFiles() {
         //Create a temp data file.
         File file;
         try {
@@ -28,6 +30,12 @@ public class AbstractGeneratorTest {
             return;
         }
         AbstractGenerator.setDataFile(file);
+        file.deleteOnExit();
+    }
+
+    @Test()
+    @Order(2)
+    public void serialisationTest() {
         //Create a mock generator
         TestGenerator generator = new TestGenerator(10, 1);
         ItemMeta mocked = new ItemFactoryMock().getItemMeta(Material.SPAWNER);
@@ -67,10 +75,10 @@ public class AbstractGeneratorTest {
         } catch (IllegalArgumentException ex) {
             Assert.fail("Failed to read generator from disk, or values mismatch!");
         }
-        file.deleteOnExit();
     }
 
     @Test()
+    @Order(0)
     public void instantiationTest() {
         //Check if invalid levels are allowed
         try {

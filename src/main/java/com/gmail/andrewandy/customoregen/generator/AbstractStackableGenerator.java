@@ -44,7 +44,11 @@ public abstract class AbstractStackableGenerator extends AbstractGenerator imple
             ItemStack itemStack = gson.fromJson(str, itemStackTypeToken);
             stack.add(new StackedObject<>(itemStack));
         }
-        this.maxSize = wrapper.getInt("MaxStackSize");
+        Integer rawMax = wrapper.get("MaxStackSize", Integer.class);
+        if (rawMax == null) {
+            throw new IllegalArgumentException("Invalid Meta! No MaxStackSize found!");
+        }
+        this.maxSize = rawMax;
         if (maxSize < -1) {
             maxSize = -1;
         }
@@ -90,6 +94,14 @@ public abstract class AbstractStackableGenerator extends AbstractGenerator imple
     @Override
     public abstract boolean canStack(ItemStack itemStack);
 
+    @Override
+    public void stack(StackedObject<ItemStack> stackedObject) {
+        if (!canStack(stackedObject)) {
+            throw new IllegalArgumentException("Object cannot be stacked!");
+        }
+
+    }
+
     protected void saveStacked() {
         ConfigurationSection section = getDataSection();
         ConfigurationSection stackedSection = section.createSection("Stacked");
@@ -132,5 +144,25 @@ public abstract class AbstractStackableGenerator extends AbstractGenerator imple
 
     public int maxSize() {
         return maxSize;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        AbstractStackableGenerator generator = (AbstractStackableGenerator) o;
+
+        if (maxSize != generator.maxSize) return false;
+        return Objects.equals(stack, generator.stack);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (stack != null ? stack.hashCode() : 0);
+        result = 31 * result + maxSize;
+        return result;
     }
 }

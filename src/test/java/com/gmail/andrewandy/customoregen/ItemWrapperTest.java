@@ -7,10 +7,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Order;
 
 public class ItemWrapperTest {
 
     @Test()
+    @Order(2)
     public void checkDataValidity() {
         ItemFactoryMock factory = new ItemFactoryMock();
         ItemMeta meta = factory.getItemMeta(Material.COBBLESTONE);
@@ -34,6 +36,7 @@ public class ItemWrapperTest {
     }
 
     @Test
+    @Order(1)
     public void checkInvalidClass() {
         ItemWrapper wrapper = ItemWrapper.wrap(new ItemFactoryMock().getItemMeta(Material.CHICKEN_SPAWN_EGG));
         wrapper.setLong("Number", 10L);
@@ -59,6 +62,7 @@ public class ItemWrapperTest {
     }
 
     @Test
+    @Order(0)
     public void checkInvalidConstructorParams() {
         ItemWrapper wrapper;
         try {

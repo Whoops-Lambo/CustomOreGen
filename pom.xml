@@ -11,7 +11,7 @@
 
     <name>CustomOreGen</name>
 
-    <description>Spawner Plugin for AJC Servers.</description>
+    <description>Ore Generator Plugin for AJC Servers</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>

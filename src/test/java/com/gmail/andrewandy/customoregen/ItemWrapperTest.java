@@ -2,11 +2,9 @@ package com.gmail.andrewandy.customoregen;
 
 import be.seeseemelk.mockbukkit.inventory.ItemFactoryMock;
 import com.gmail.andrewandy.customoregen.util.ItemWrapper;
-import junit.framework.TestResult;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 

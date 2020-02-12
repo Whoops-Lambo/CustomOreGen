@@ -48,13 +48,13 @@ public class UniversalIslandGenerator extends AbstractGenerator {
         super(meta);
         ItemWrapper wrapper = ItemWrapper.wrap(meta);
         String jsonMapped = wrapper.getString("BlockStateChances");
-        this.blockStateChances = new GsonBuilder().create().fromJson(jsonMapped, blockStateChanceType);
+        this.blockStateChances = getBlockStateChancesFromJson(jsonMapped);
     }
 
     public UniversalIslandGenerator(UUID fromID) throws IllegalArgumentException {
         super(fromID);
         String jsonMapped = getDataSection().getString("BlockStateChances");
-        this.blockStateChances = new GsonBuilder().create().fromJson(jsonMapped, blockStateChanceType);
+        this.blockStateChances = getBlockStateChancesFromJson(jsonMapped);
         calculateChances();
     }
 
@@ -70,6 +70,10 @@ public class UniversalIslandGenerator extends AbstractGenerator {
             int actualNumerator = originalNumerator * denominator;
             chanceMap.put(new int[]{currentNumerator++, currentNumerator += actualNumerator}, entry.getKey());
         }
+    }
+
+    private Map<String, Integer> getBlockStateChancesFromJson(String json) {
+        return new GsonBuilder().create().fromJson(json, blockStateChanceType);
     }
 
     /**
@@ -134,10 +138,13 @@ public class UniversalIslandGenerator extends AbstractGenerator {
     @Override
     public void save() {
         super.save();
-        Gson gson = new GsonBuilder().create();
-        String json = gson.toJson(blockStateChances, blockStateChanceType);
         ConfigurationSection section = getDataSection();
-        section.set("BlockStateChances", json);
+        section.set("BlockStateChances", getBlockChanceJson());
+    }
+
+    public String getBlockChanceJson() {
+        Gson gson = new GsonBuilder().create();
+        return gson.toJson(blockStateChances, blockStateChanceType);
     }
 
     @Override
@@ -145,8 +152,6 @@ public class UniversalIslandGenerator extends AbstractGenerator {
         //Mutates the original meta.
         super.writeToMeta(original);
         ItemWrapper wrapper = ItemWrapper.wrap(original);
-        Gson gson = new GsonBuilder().create();
-        String json = gson.toJson(blockStateChances, blockStateChanceType);
-        wrapper.setString("BlockStateChances", json);
+        wrapper.setString("BlockStateChances", getBlockChanceJson());
     }
 }

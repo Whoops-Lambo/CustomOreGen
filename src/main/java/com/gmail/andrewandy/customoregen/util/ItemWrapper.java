@@ -43,25 +43,27 @@ public class ItemWrapper {
         if (array) {
             clazz = clazz.getComponentType();
         }
+        PersistentDataType<?, ?> ret;
         if (clazz == byte.class) {
-            return array ? PersistentDataType.BYTE_ARRAY : PersistentDataType.BYTE;
+            ret = array ? PersistentDataType.BYTE_ARRAY : PersistentDataType.BYTE;
         } else if (clazz == short.class) {
-            return PersistentDataType.SHORT;
+            ret = PersistentDataType.SHORT;
         } else if (clazz == float.class) {
-            return PersistentDataType.FLOAT;
+            ret = PersistentDataType.FLOAT;
         } else if (clazz == int.class) {
-            return array ? PersistentDataType.INTEGER : PersistentDataType.INTEGER_ARRAY;
+            ret = array ? PersistentDataType.INTEGER : PersistentDataType.INTEGER_ARRAY;
         } else if (clazz == double.class) {
-            return PersistentDataType.DOUBLE;
+            ret = PersistentDataType.DOUBLE;
         } else if (clazz == long.class) {
-            return array ? PersistentDataType.LONG_ARRAY : PersistentDataType.LONG;
+            ret = array ? PersistentDataType.LONG_ARRAY : PersistentDataType.LONG;
         } else if (clazz == String.class) {
-            return PersistentDataType.STRING;
+            ret = PersistentDataType.STRING;
         } else if (PersistentDataContainer.class.isAssignableFrom(clazz)) {
-            return PersistentDataType.TAG_CONTAINER;
+            ret = PersistentDataType.TAG_CONTAINER;
         } else {
-            return null;
+            ret = null;
         }
+        return ret;
     }
 
     private NamespacedKey getKey(String name) {
@@ -101,7 +103,7 @@ public class ItemWrapper {
         return this;
     }
 
-    public int getInt(String key) {
+    public Integer getInt(String key) {
         return container.getOrDefault(getKey(key), PersistentDataType.INTEGER, 0);
     }
 
@@ -118,7 +120,7 @@ public class ItemWrapper {
         return this;
     }
 
-    public byte getByte(String key) {
+    public Byte getByte(String key) {
         return container.getOrDefault(getKey(key), PersistentDataType.BYTE, (byte) 0);
     }
 
@@ -135,7 +137,7 @@ public class ItemWrapper {
         return this;
     }
 
-    public long getLong(String key) {
+    public Long getLong(String key) {
         return container.getOrDefault(getKey(key), PersistentDataType.LONG, 0L);
     }
 
@@ -148,7 +150,7 @@ public class ItemWrapper {
         return this;
     }
 
-    public float getFloat(String key) {
+    public Float getFloat(String key) {
         return container.getOrDefault(getKey(key), PersistentDataType.FLOAT, 0F);
     }
 
@@ -157,7 +159,7 @@ public class ItemWrapper {
         return this;
     }
 
-    public double getDouble(String key) {
+    public Double getDouble(String key) {
         return container.getOrDefault(getKey(key), PersistentDataType.DOUBLE, 0D);
     }
 

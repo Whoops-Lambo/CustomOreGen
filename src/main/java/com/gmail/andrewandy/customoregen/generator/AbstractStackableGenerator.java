@@ -44,7 +44,7 @@ public abstract class AbstractStackableGenerator extends AbstractGenerator imple
             ItemStack itemStack = gson.fromJson(str, itemStackTypeToken);
             stack.add(new StackedObject<>(itemStack));
         }
-        Integer rawMax = wrapper.get("MaxStackSize", Integer.class);
+        Integer rawMax = wrapper.getInt("MaxStackSize");
         if (rawMax == null) {
             throw new IllegalArgumentException("Invalid Meta! No MaxStackSize found!");
         }

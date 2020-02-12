@@ -56,9 +56,6 @@ public abstract class AbstractGenerator implements BlockGenerator {
             this.level = level;
             this.maxLevel = maxLevel;
             this.priority = Priority.valueOf(wrapper.getString("Priority"));
-            if (this.priority == null) {
-                throw new IllegalArgumentException("No priority found!");
-            }
             if (level > maxLevel || level < 1) {
                 throw new IllegalStateException("Invalid Spawner params detected when deserialising from ItemMeta!");
             }

@@ -5,6 +5,7 @@ import com.gmail.andrewandy.customoregen.generator.Priority;
 import org.bukkit.Location;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -14,8 +15,11 @@ import java.util.stream.Collectors;
  */
 public class GeneratorManager {
 
-    public Collection<BlockGenerator> generators = new ConcurrentHashMap<BlockGenerator, Object>().keySet();
+    public Collection<BlockGenerator> generators = ConcurrentHashMap.newKeySet();
 
+    public Collection<BlockGenerator> getAllGenerators() {
+        return new HashSet<>(generators);
+    }
 
     public List<BlockGenerator> getGeneratorsAt(Location location) {
         List<BlockGenerator> generators = this.generators.stream().filter(blockGenerator -> blockGenerator.isActiveAtLocation(location)).collect(Collectors.toList());
@@ -35,6 +39,10 @@ public class GeneratorManager {
         generators.remove(generator);
     }
 
+    /**
+     * @param location
+     * @return
+     */
     public Collection<BlockGenerator> unregisterAllActiveAt(Location location) {
         Collection<BlockGenerator> toRemove = generators.stream().filter(generator -> generator.isActiveAtLocation(location)).collect(Collectors.toList());
         generators.removeAll(toRemove);

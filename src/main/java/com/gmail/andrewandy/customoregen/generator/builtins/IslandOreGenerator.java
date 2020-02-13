@@ -25,7 +25,7 @@ public class IslandOreGenerator extends IslandRegionGenerator {
     private static final Type blockStateChanceType = new TypeToken<Map<String, Integer>>() {
     }.getType();
 
-    private SpawnChanceWrapper spawnChances;
+    private GenerationChanceWrapper spawnChances;
 
 
     public IslandOreGenerator(UUID generatorID) {
@@ -89,7 +89,7 @@ public class IslandOreGenerator extends IslandRegionGenerator {
     @Override
     public void save() {
         super.save();
-        spawnChances = spawnChances == null ? new SpawnChanceWrapper() : spawnChances;
+        spawnChances = spawnChances == null ? new GenerationChanceWrapper() : spawnChances;
         ConfigurationSection section = getDataSection();
         section.set("SpawnChanceWrapper", spawnChances.serialise());
     }
@@ -99,7 +99,7 @@ public class IslandOreGenerator extends IslandRegionGenerator {
         //Mutates the original meta.
         super.writeToMeta(original);
         ItemWrapper wrapper = ItemWrapper.wrap(original);
-        this.spawnChances = this.spawnChances == null ? new SpawnChanceWrapper() : this.spawnChances;
+        this.spawnChances = this.spawnChances == null ? new GenerationChanceWrapper() : this.spawnChances;
         wrapper.setString("BlockStateChances", this.spawnChances.serialise());
     }
 }

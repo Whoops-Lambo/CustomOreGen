@@ -1,4 +1,4 @@
-package com.gmail.andrewandy.customoregen;
+package com.gmail.andrewandy.customoregen.util;
 
 import org.bukkit.Location;
 import org.bukkit.World;

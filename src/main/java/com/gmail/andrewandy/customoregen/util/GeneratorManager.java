@@ -1,4 +1,4 @@
-package com.gmail.andrewandy.customoregen;
+package com.gmail.andrewandy.customoregen.util;
 
 import com.gmail.andrewandy.corelib.util.Common;
 import com.gmail.andrewandy.customoregen.generator.BlockGenerator;

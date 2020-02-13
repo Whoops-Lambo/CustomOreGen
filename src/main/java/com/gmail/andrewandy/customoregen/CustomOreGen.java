@@ -1,6 +1,7 @@
 package com.gmail.andrewandy.customoregen;
 
 import com.gmail.andrewandy.corelib.util.Common;
+import com.gmail.andrewandy.customoregen.util.GeneratorManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Level;

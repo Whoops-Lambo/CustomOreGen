@@ -3,6 +3,7 @@ package com.gmail.andrewandy.customoregen;
 import be.seeseemelk.mockbukkit.WorldMock;
 import com.gmail.andrewandy.customoregen.generator.BlockGenerator;
 import com.gmail.andrewandy.customoregen.implementations.TestGenerator;
+import com.gmail.andrewandy.customoregen.util.GeneratorManager;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;

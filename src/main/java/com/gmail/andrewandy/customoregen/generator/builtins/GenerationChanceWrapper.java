@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class SpawnChanceWrapper {
+public class GenerationChanceWrapper {
 
     private static final Type blockStateChanceType = new TypeToken<Map<String, Integer>>() {
     }.getType();
@@ -20,10 +20,10 @@ public class SpawnChanceWrapper {
     private Map<int[], String> chanceMap = new HashMap<>();
     private int denominator = 0;
 
-    public SpawnChanceWrapper() {
+    public GenerationChanceWrapper() {
     }
 
-    public SpawnChanceWrapper(String serial) {
+    public GenerationChanceWrapper(String serial) {
         blockStateChances = new GsonBuilder().create().fromJson(serial, blockStateChanceType);
         recalculateChances();
     }
@@ -53,7 +53,7 @@ public class SpawnChanceWrapper {
      * @param chance The relative chance for the block to be added. See the skyblock_settings.yml for
      *               an example of this works.
      */
-    public SpawnChanceWrapper addBlockChance(BlockData block, int chance) {
+    public GenerationChanceWrapper addBlockChance(BlockData block, int chance) {
         if (blockStateChances.containsKey(block.getAsString())) {
             blockStateChances.replace(block.getAsString(), chance);
         } else {
@@ -63,7 +63,7 @@ public class SpawnChanceWrapper {
         return this;
     }
 
-    public SpawnChanceWrapper removeBlockChance(BlockData block) {
+    public GenerationChanceWrapper removeBlockChance(BlockData block) {
         blockStateChances.remove(block.getAsString());
         chanceMap.values().remove(block.getAsString());
         recalculateChances();
@@ -87,7 +87,7 @@ public class SpawnChanceWrapper {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SpawnChanceWrapper that = (SpawnChanceWrapper) o;
+        GenerationChanceWrapper that = (GenerationChanceWrapper) o;
         return denominator == that.denominator &&
                 Objects.equals(blockStateChances, that.blockStateChances) &&
                 Objects.equals(chanceMap, that.chanceMap);

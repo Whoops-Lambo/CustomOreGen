@@ -1,6 +1,6 @@
 package com.gmail.andrewandy.customoregen.generator;
 
-import com.gmail.andrewandy.customoregen.Region;
+import com.gmail.andrewandy.customoregen.util.Region;
 import com.gmail.andrewandy.customoregen.util.ItemWrapper;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;

@@ -22,7 +22,7 @@ import java.util.UUID;
 public class UniversalIslandGenerator extends AbstractGenerator implements SingleInstanceGenerator {
 
     private static UniversalIslandGenerator instance;
-    private SpawnChanceWrapper spawnChances;
+    private GenerationChanceWrapper spawnChances;
 
     public UniversalIslandGenerator(int maxLevel, int level) {
         super(maxLevel, level);
@@ -64,13 +64,13 @@ public class UniversalIslandGenerator extends AbstractGenerator implements Singl
     /**
      * Internal method.
      *
-     * @param serial The serialised form of an {@link SpawnChanceWrapper}
+     * @param serial The serialised form of an {@link GenerationChanceWrapper}
      */
     private void setSpawnChances(String serial) {
-        spawnChances = new SpawnChanceWrapper(serial);
+        spawnChances = new GenerationChanceWrapper(serial);
     }
 
-    public SpawnChanceWrapper getSpawnChanceWrapper() {
+    public GenerationChanceWrapper getSpawnChanceWrapper() {
         return spawnChances;
     }
 

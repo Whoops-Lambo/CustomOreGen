@@ -4,7 +4,6 @@ import com.gmail.andrewandy.customoregen.generator.IslandRegionGenerator;
 import com.gmail.andrewandy.customoregen.generator.Priority;
 import com.gmail.andrewandy.customoregen.util.ItemWrapper;
 import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.bukkit.Location;
 import org.bukkit.block.data.BlockData;
@@ -26,7 +25,7 @@ public class IslandOreGenerator extends IslandRegionGenerator {
     private static final Type blockStateChanceType = new TypeToken<Map<String, Integer>>() {
     }.getType();
 
-    private SpawnChanceWrapper wrapper;
+    private SpawnChanceWrapper spawnChances;
 
 
     public IslandOreGenerator(UUID generatorID) {
@@ -63,15 +62,15 @@ public class IslandOreGenerator extends IslandRegionGenerator {
     }
 
     private void setSpawnChances(String serial) {
-        wrapper = new GsonBuilder().create().fromJson(serial, blockStateChanceType);
+        spawnChances = new GsonBuilder().create().fromJson(serial, blockStateChanceType);
     }
 
     @Override
     public BlockData generateBlockAt(Location location) {
-        if (!isActiveAtLocation(location) || wrapper == null) {
+        if (!isActiveAtLocation(location) || spawnChances == null) {
             return null;
         }
-        return wrapper.getRandomBlock();
+        return spawnChances.getRandomBlock();
     }
 
     @Override
@@ -90,9 +89,9 @@ public class IslandOreGenerator extends IslandRegionGenerator {
     @Override
     public void save() {
         super.save();
-        wrapper = wrapper == null ? new SpawnChanceWrapper() : wrapper;
+        spawnChances = spawnChances == null ? new SpawnChanceWrapper() : spawnChances;
         ConfigurationSection section = getDataSection();
-        section.set("SpawnChanceWrapper", wrapper.serialise());
+        section.set("SpawnChanceWrapper", spawnChances.serialise());
     }
 
     @Override
@@ -100,8 +99,7 @@ public class IslandOreGenerator extends IslandRegionGenerator {
         //Mutates the original meta.
         super.writeToMeta(original);
         ItemWrapper wrapper = ItemWrapper.wrap(original);
-        Gson gson = new GsonBuilder().create();
-        this.wrapper = this.wrapper == null ? new SpawnChanceWrapper() : this.wrapper;
-        wrapper.setString("BlockStateChances", this.wrapper.serialise());
+        this.spawnChances = this.spawnChances == null ? new SpawnChanceWrapper() : this.spawnChances;
+        wrapper.setString("BlockStateChances", this.spawnChances.serialise());
     }
 }

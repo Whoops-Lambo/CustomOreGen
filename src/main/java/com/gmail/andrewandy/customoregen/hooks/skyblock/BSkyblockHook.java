@@ -4,7 +4,7 @@ import com.gmail.andrewandy.corelib.util.Common;
 import com.gmail.andrewandy.corelib.util.Config;
 import com.gmail.andrewandy.customoregen.CustomOreGen;
 import com.gmail.andrewandy.customoregen.generator.Priority;
-import com.gmail.andrewandy.customoregen.generator.UniversalIslandGenerator;
+import com.gmail.andrewandy.customoregen.generator.builtins.UniversalIslandGenerator;
 import com.gmail.andrewandy.customoregen.hooks.BentoBoxHook;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -57,7 +57,7 @@ public final class BSkyblockHook extends BentoBoxHook {
                     Common.log(Level.WARNING, "[Hooks] &cInvalid Material found! Skipping...");
                     continue;
                 }
-                islandGenerator.addBlockChance(material.createBlockData(), chance);
+                islandGenerator.getSpawnChanceWrapper().addBlockChance(material.createBlockData(), chance);
             }
         }
         UniversalIslandGenerator.setInstance(islandGenerator);

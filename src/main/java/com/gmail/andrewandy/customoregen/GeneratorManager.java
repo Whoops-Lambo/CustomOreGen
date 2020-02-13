@@ -1,7 +1,9 @@
 package com.gmail.andrewandy.customoregen;
 
+import com.gmail.andrewandy.corelib.util.Common;
 import com.gmail.andrewandy.customoregen.generator.BlockGenerator;
 import com.gmail.andrewandy.customoregen.generator.Priority;
+import com.gmail.andrewandy.customoregen.generator.SingleInstanceGenerator;
 import org.bukkit.Location;
 
 import java.util.Collection;
@@ -15,7 +17,7 @@ import java.util.stream.Collectors;
  */
 public class GeneratorManager {
 
-    public Collection<BlockGenerator> generators = ConcurrentHashMap.newKeySet();
+    private Collection<BlockGenerator> generators = ConcurrentHashMap.newKeySet();
 
     public Collection<BlockGenerator> getAllGenerators() {
         return new HashSet<>(generators);
@@ -32,8 +34,24 @@ public class GeneratorManager {
     }
 
     public void registerGenerator(BlockGenerator generator) {
+        if (generator instanceof SingleInstanceGenerator) {
+            throw new UnsupportedOperationException();
+        }
         generators.add(generator);
     }
+
+    public void registerUniversalGenerator(SingleInstanceGenerator generator, boolean overwrite) {
+        if (overwrite) {
+            generators.removeIf(gen -> Common.classEquals(gen.getClass(), generator.getClass()));
+        } else if (generators.stream().noneMatch(gen -> Common.classEquals(gen.getClass(), generator.getClass()))) {
+            generators.add(generator);
+        }
+    }
+
+    public void unregisterUniversalGenerator(Class<? extends SingleInstanceGenerator> clazz) {
+        generators.removeIf(gen -> Common.classEquals(gen.getClass(), clazz));
+    }
+
 
     public void unregisterGenerator(BlockGenerator generator) {
         generators.remove(generator);

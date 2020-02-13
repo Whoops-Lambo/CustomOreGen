@@ -86,7 +86,7 @@ public class IslandOreGenerator extends IslandRegionGenerator {
      * Add a chance for a block to be generated. Overwrites existing keys if present.
      *
      * @param block  The BlockData to be added.
-     * @param chance The relative chance for the block to be added. See the settings.yml for
+     * @param chance The relative chance for the block to be added. See the skyblock_settings.yml for
      *               an example of this works.
      */
     public IslandOreGenerator addBlockChance(BlockData block, int chance) {

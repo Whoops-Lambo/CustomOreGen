@@ -1,5 +1,6 @@
 package com.gmail.andrewandy.customoregen.generator;
 
+import com.gmail.andrewandy.customoregen.CustomOreGen;
 import com.gmail.andrewandy.customoregen.util.ItemWrapper;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -23,20 +24,20 @@ import java.util.concurrent.ThreadLocalRandom;
  * Represents a generator which fundamentally is the same as {@link com.gmail.andrewandy.customoregen.generator.builtins.IslandOreGenerator}
  * but works for all islands.
  */
-public class UniversalIslandGenerator extends AbstractGenerator {
+public class UniversalIslandGenerator extends AbstractGenerator implements SingleInstanceGenerator {
 
     private static final Type blockStateChanceType = new TypeToken<Map<String, Integer>>() {
     }.getType();
-
+    private static UniversalIslandGenerator instance;
     private Map<String, Integer> blockStateChances = new HashMap<>();
     private Map<int[], String> chanceMap = new HashMap<>();
     private int denominator = 0;
 
-    protected UniversalIslandGenerator(int maxLevel, int level) {
+    public UniversalIslandGenerator(int maxLevel, int level) {
         super(maxLevel, level);
     }
 
-    protected UniversalIslandGenerator(int maxLevel, int level, Priority priority) {
+    public UniversalIslandGenerator(int maxLevel, int level, Priority priority) {
         super(maxLevel, level, priority);
     }
 
@@ -56,6 +57,15 @@ public class UniversalIslandGenerator extends AbstractGenerator {
         String jsonMapped = getDataSection().getString("BlockStateChances");
         this.blockStateChances = getBlockStateChancesFromJson(jsonMapped);
         calculateChances();
+    }
+
+    public static UniversalIslandGenerator getInstance() {
+        return instance;
+    }
+
+    public static void setInstance(UniversalIslandGenerator generator) {
+        instance = Objects.requireNonNull(generator);
+        CustomOreGen.getGeneratorManager().registerUniversalGenerator(instance, true);
     }
 
     private void calculateChances() {
@@ -80,7 +90,7 @@ public class UniversalIslandGenerator extends AbstractGenerator {
      * Add a chance for a block to be generated. Overwrites existing keys if present.
      *
      * @param block  The BlockData to be added.
-     * @param chance The relative chance for the block to be added. See the settings.yml for
+     * @param chance The relative chance for the block to be added. See the skyblock_settings.yml for
      *               an example of this works.
      */
     public UniversalIslandGenerator addBlockChance(BlockData block, int chance) {

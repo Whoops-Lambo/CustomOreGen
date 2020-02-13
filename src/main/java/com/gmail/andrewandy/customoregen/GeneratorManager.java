@@ -24,11 +24,13 @@ public class GeneratorManager {
     }
 
     public List<BlockGenerator> getGeneratorsAt(Location location) {
-        List<BlockGenerator> generators = this.generators.stream().filter(blockGenerator -> blockGenerator.isActiveAtLocation(location)).collect(Collectors.toList());
+        List<BlockGenerator> generators = this.generators.stream()
+                .filter(blockGenerator -> blockGenerator.isActiveAtLocation(location)).collect(Collectors.toList());
         Priority[] priorities = Priority.values();
         for (int index = 0; index < priorities.length; ) {
             Priority priority = priorities[index++];
-            generators.addAll(generators.stream().filter(blockGenerator -> blockGenerator.getPriority() == priority).collect(Collectors.toSet()));
+            generators.addAll(generators.stream()
+                    .filter(blockGenerator -> blockGenerator.getPriority() == priority).collect(Collectors.toSet()));
         }
         return generators;
     }
@@ -62,13 +64,15 @@ public class GeneratorManager {
      * @return
      */
     public Collection<BlockGenerator> unregisterAllActiveAt(Location location) {
-        Collection<BlockGenerator> toRemove = generators.stream().filter(generator -> generator.isActiveAtLocation(location)).collect(Collectors.toList());
+        Collection<BlockGenerator> toRemove = generators.stream()
+                .filter(generator -> generator.isActiveAtLocation(location)).collect(Collectors.toList());
         generators.removeAll(toRemove);
         return toRemove;
     }
 
     public Collection<BlockGenerator> retainAllActiveAt(Location location) {
-        Collection<BlockGenerator> toRemove = generators.stream().filter(generator -> !generator.isActiveAtLocation(location)).collect(Collectors.toList());
+        Collection<BlockGenerator> toRemove = generators.stream()
+                .filter(generator -> !generator.isActiveAtLocation(location)).collect(Collectors.toList());
         generators.removeAll(toRemove);
         return toRemove;
     }

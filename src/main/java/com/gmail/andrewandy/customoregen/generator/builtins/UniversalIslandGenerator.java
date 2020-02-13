@@ -45,7 +45,7 @@ public class UniversalIslandGenerator extends AbstractGenerator implements Singl
 
     public UniversalIslandGenerator(UUID fromID) throws IllegalArgumentException {
         super(fromID);
-        String jsonMapped = getDataSection().getString("BlockStateChances");
+        String jsonMapped = getDataSection().getString("SpawnChanceWrapper");
         setSpawnChances(jsonMapped);
     }
 

@@ -8,9 +8,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -56,24 +54,23 @@ public class CustomOreGen extends JavaPlugin {
     }
 
     private void loadConfig() throws IOException {
-        URL url = this.getClassLoader().getResource("settings.yml");
-        URI uri;
-        try {
-            uri = url.toURI(); //Throws nullpointer
-        } catch (URISyntaxException ex) {
-            throw new IllegalStateException(ex);
+        InputStream stream = this.getClassLoader().getResourceAsStream("settings.yml");
+        if (stream == null) {
+            Common.log(Level.SEVERE, "&cUnable to locate settings file from jar!");
+            return;
         }
-        Path path = Paths.get(uri);
         File folder = getDataFolder();
+        if (!folder.isDirectory()) {
+            folder.mkdir();
+        }
         File file = new File(folder.getAbsolutePath(), "settings.yml");
         if (!file.isFile()) {
             if (!file.createNewFile()) {
                 Common.log(Level.SEVERE, "&caUnable to copy over the default settings!");
                 return;
             }
+            Files.copy(stream, file.toPath());
         }
-        //Copy the data.
-        Files.copy(path, new FileOutputStream(file));
         cfg = YamlConfiguration.loadConfiguration(file);
     }
 
@@ -81,8 +78,9 @@ public class CustomOreGen extends JavaPlugin {
         ConfigurationSection section = cfg.getConfigurationSection("OverworldSettings");
         if (section == null) {
             cfg.createSection("OverworldSettings");
+            return;
         }
-        Priority priority = Priority.valueOf(cfg.getString("Priority"));
+        Priority priority = Priority.valueOf(section.getString("Priority"));
         int maxLevel = cfg.getInt("MaxLevel");
         int currentLevel = cfg.getInt("CurrentLevel");
         if (maxLevel < 0 || currentLevel > maxLevel) {

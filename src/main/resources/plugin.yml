@@ -6,6 +6,3 @@ api-version: 1.15
 prefix: ""
 load: STARTUP
 commands:
-  SpawnerCommand:
-    aliases: Spawner
-    description: "Get a spawner"

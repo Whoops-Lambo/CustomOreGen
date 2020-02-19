@@ -17,23 +17,23 @@ public class OverworldGenerator extends AbstractGenerator implements SingleInsta
 
     private static OverworldGenerator instance;
 
-    public OverworldGenerator(int maxLevel, int level, OverworldGenerator instance) {
+    public OverworldGenerator(int maxLevel, int level) {
         super(maxLevel, level);
     }
 
-    public OverworldGenerator(int maxLevel, int level, Priority priority, OverworldGenerator instance) {
+    public OverworldGenerator(int maxLevel, int level, Priority priority) {
         super(maxLevel, level, priority);
     }
 
-    public OverworldGenerator(ItemStack itemStack, OverworldGenerator instance) {
+    public OverworldGenerator(ItemStack itemStack) {
         super(itemStack);
     }
 
-    public OverworldGenerator(ItemMeta meta, OverworldGenerator instance) {
+    public OverworldGenerator(ItemMeta meta) {
         super(meta);
     }
 
-    public OverworldGenerator(UUID fromID, OverworldGenerator instance) throws IllegalArgumentException {
+    public OverworldGenerator(UUID fromID) throws IllegalArgumentException {
         super(fromID);
     }
 

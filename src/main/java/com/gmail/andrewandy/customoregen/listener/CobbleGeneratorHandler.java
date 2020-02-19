@@ -20,7 +20,7 @@ public class CobbleGeneratorHandler implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onCobbleGeneration(BlockFormEvent event) {
-        //Check if the event was just called, return to prevent infinite recursion.
+        //Check if the event was just called, return to prevent an infinite recursion.
         if (recursive == event) {
             return;
         }
@@ -36,7 +36,7 @@ public class CobbleGeneratorHandler implements Listener {
         if (originalState.getType() == Material.WATER && (targetType == Material.COBBLESTONE || targetType == Material.STONE)) {
             //Execute the generators, sequentially based on priority.
             CustomOreGen.getGeneratorManager().getGeneratorsAt(original.getLocation()).forEach(gen -> {
-                //Should be active because this filter was done in getGeneratorsAt
+                //Should be active because this is checked in #getGeneratorsAt.
                 assert gen.isActiveAtLocation(original.getLocation());
                 BlockData toBlock = gen.generateBlockAt(original.getLocation());
                 //Call a new ore gen event.
@@ -44,7 +44,7 @@ public class CobbleGeneratorHandler implements Listener {
                 if (!genEvent.isCancelled()) {
                     //If the generation event isn't cancelled call a new block form event.
                     targetState.setBlockData(toBlock);
-                    //Assign to the recursive varible so this listener doesn't loop forever.
+                    //Assign to the recursive variable so this listener doesn't loop forever.
                     recursive = new BlockFormEvent(original, targetState);
                     recursive.callEvent();
                 }

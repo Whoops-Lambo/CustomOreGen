@@ -22,7 +22,7 @@ public final class BSkyblockHook extends BentoBoxHook {
             Common.log(Level.INFO, "[Hooks] &aBSkyblock was not found.");
             return;
         }
-        skyblockConfig = new Config("skyblock_settings.yml", CustomOreGen.getInstance());
+        skyblockConfig = new Config("settings.yml", CustomOreGen.getInstance());
         loadDefaultGenerator();
         Common.log(Level.INFO, "[Hooks] &bHooked into BSkyblock!");
     }

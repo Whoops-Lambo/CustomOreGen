@@ -1,6 +1,7 @@
 package com.gmail.andrewandy.customoregen;
 
 import com.gmail.andrewandy.corelib.util.Common;
+import com.gmail.andrewandy.customoregen.commands.BaseCommand;
 import com.gmail.andrewandy.customoregen.generator.AbstractGenerator;
 import com.gmail.andrewandy.customoregen.generator.Priority;
 import com.gmail.andrewandy.customoregen.generator.builtins.GenerationChanceWrapper;
@@ -47,6 +48,7 @@ public class CustomOreGen extends JavaPlugin {
         loadOverworldGenerator();
         setupCobbleHandler();
         loadHooks();
+        getCommand("CustomOreGen").setExecutor(BaseCommand.getInstance());
         Common.log(Level.INFO, "&bPlugin has been enabled! Took " + (System.currentTimeMillis() - time) + "ms");
     }
 
@@ -77,7 +79,7 @@ public class CustomOreGen extends JavaPlugin {
         BSkyblockHook.getInstance();
     }
 
-    private void loadConfig() throws IOException {
+    public void loadConfig() throws IOException {
         InputStream stream = this.getClassLoader().getResourceAsStream("settings.yml");
         if (stream == null) {
             Common.log(Level.SEVERE, "&cUnable to locate settings file from jar!");

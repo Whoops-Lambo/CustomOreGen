@@ -1,4 +1,36 @@
 package com.gmail.andrewandy.customoregen.commands;
 
-public class ReloadCommand {
+import com.gmail.andrewandy.corelib.api.command.NestedCommand;
+import com.gmail.andrewandy.corelib.util.Common;
+import com.gmail.andrewandy.customoregen.CustomOreGen;
+import org.bukkit.command.CommandSender;
+
+import java.io.IOException;
+
+public class ReloadCommand extends NestedCommand {
+
+    private static final ReloadCommand instance = new ReloadCommand();
+
+    public static ReloadCommand getInstance() {
+        return instance;
+    }
+
+    private ReloadCommand() {
+        super("reload", "customoregen.reload");
+    }
+
+    @Override
+    public boolean onCommand(CommandSender commandSender, String[] args) {
+        if (!commandSender.hasPermission(super.getPermission())) {
+            Common.tell(commandSender, "&cInsufficient Permission!");
+            return true;
+        }
+        try {
+            CustomOreGen.getInstance().loadConfig();
+        } catch (IOException e) {
+           Common.tell(commandSender, "&cError occurred, please check console.");
+           e.printStackTrace();
+        }
+        return true;
+    }
 }

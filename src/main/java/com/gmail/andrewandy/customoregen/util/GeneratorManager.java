@@ -39,6 +39,7 @@ public class GeneratorManager {
         if (generator instanceof SingleInstanceGenerator) {
             throw new UnsupportedOperationException();
         }
+        generators.remove(generator);
         generators.add(generator);
     }
 

@@ -10,8 +10,8 @@ import java.util.*;
 
 public class BaseCommand implements com.gmail.andrewandy.corelib.api.command.BaseCommand {
 
-    private Collection<NestedCommand> nestedCommands;
     private static final BaseCommand instance = new BaseCommand();
+    private Collection<NestedCommand> nestedCommands;
 
     private BaseCommand() {
         nestedCommands = Arrays.asList(

@@ -2,7 +2,6 @@ package com.gmail.andrewandy.customoregen.commands;
 
 import com.gmail.andrewandy.corelib.api.command.NestedCommand;
 import com.gmail.andrewandy.corelib.util.Common;
-import com.gmail.andrewandy.customoregen.CustomOreGen;
 import com.gmail.andrewandy.customoregen.generator.AbstractGenerator;
 import org.bukkit.command.CommandSender;
 
@@ -10,12 +9,12 @@ public class SaveCommand extends NestedCommand {
 
     private static final SaveCommand instance = new SaveCommand();
 
-    public static SaveCommand getInstance() {
-        return instance;
-    }
-
     private SaveCommand() {
         super("save", "customoregen.save");
+    }
+
+    public static SaveCommand getInstance() {
+        return instance;
     }
 
     @Override

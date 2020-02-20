@@ -11,12 +11,12 @@ public class ReloadCommand extends NestedCommand {
 
     private static final ReloadCommand instance = new ReloadCommand();
 
-    public static ReloadCommand getInstance() {
-        return instance;
-    }
-
     private ReloadCommand() {
         super("reload", "customoregen.reload");
+    }
+
+    public static ReloadCommand getInstance() {
+        return instance;
     }
 
     @Override
@@ -28,8 +28,8 @@ public class ReloadCommand extends NestedCommand {
         try {
             CustomOreGen.getInstance().loadConfig();
         } catch (IOException e) {
-           Common.tell(commandSender, "&cError occurred, please check console.");
-           e.printStackTrace();
+            Common.tell(commandSender, "&cError occurred, please check console.");
+            e.printStackTrace();
         }
         return true;
     }

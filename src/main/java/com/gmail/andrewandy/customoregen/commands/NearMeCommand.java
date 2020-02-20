@@ -11,12 +11,12 @@ public class NearMeCommand extends NestedCommand {
 
     private static final NearMeCommand instance = new NearMeCommand();
 
-    public static NearMeCommand getInstance() {
-        return instance;
-    }
-
     private NearMeCommand() {
         super("nearme");
+    }
+
+    public static NearMeCommand getInstance() {
+        return instance;
     }
 
     @Override

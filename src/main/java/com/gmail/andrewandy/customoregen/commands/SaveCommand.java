@@ -25,7 +25,7 @@ public class SaveCommand extends NestedCommand {
         }
         long millis = System.currentTimeMillis();
         AbstractGenerator.globalUpdateFile();
-        Common.tell(commandSender, "&b[CustomOreGen] [Serial] Saved data, took " + (System.currentTimeMillis() - millis) + "ms");
+        Common.tell(commandSender, "&3&l[CustomOreGen] &aSaved data, took " + (System.currentTimeMillis() - millis) + "ms");
         return true;
     }
 }

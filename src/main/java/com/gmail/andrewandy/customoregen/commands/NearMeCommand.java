@@ -28,7 +28,7 @@ public class NearMeCommand extends NestedCommand {
         Entity entity = (Entity) commandSender;
         Location location = entity.getLocation();
         int amt = CustomOreGen.getGeneratorManager().getGeneratorsAt(location).size();
-        Common.tell(entity, "&e[Generators] &aThere are " + amt + " block generators near you!");
+        Common.tell(entity, "&e&l[Generators] &aThere are " + amt + " block generators near you!");
         return true;
     }
 }

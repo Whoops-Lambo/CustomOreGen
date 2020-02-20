@@ -27,8 +27,9 @@ public class ReloadCommand extends NestedCommand {
         }
         try {
             CustomOreGen.getInstance().loadConfig();
+            Common.tell(commandSender, "&3&l[CustomOreGen] &eSettings Reloaded!");
         } catch (IOException e) {
-            Common.tell(commandSender, "&cError occurred, please check console.");
+            Common.tell(commandSender, "&c&l[CustomOreGen] &cError occurred, please check console.");
             e.printStackTrace();
         }
         return true;

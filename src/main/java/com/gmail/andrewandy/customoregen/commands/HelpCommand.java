@@ -21,10 +21,10 @@ public class HelpCommand extends NestedCommand {
     public boolean onCommand(CommandSender commandSender, String[] args) {
         Common.tell(commandSender,
                 "&b&lAvailable Commands: ",
-                "&a - nearme [Displays the number of generators near you]",
-                "&a - reload [Reloads settings.yml]",
-                "&3 - help [Shows this menu]",
-                "&e - save [Saves all data to disk]");
+                "&e - NearMe --> [Displays the number of generators near you]",
+                "&a - Reload --> [Reloads settings.yml]",
+                "&c - Help --> [Shows this menu]",
+                "&b - Save --> [Saves all data to disk]");
         return true;
     }
 }

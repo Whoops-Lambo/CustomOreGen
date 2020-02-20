@@ -33,7 +33,7 @@ public class CobbleGeneratorHandler implements Listener {
     public static void removeEventAddon(Consumer<BlockFormEvent> addon) {
         addons.remove(addon);
     }
-
+    
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onCobbleGeneration(BlockFormEvent event) {
         //Check if the event was just called, return to prevent an infinite recursion.

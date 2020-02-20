@@ -3,8 +3,6 @@ package com.gmail.andrewandy.customoregen.generator.builtins;
 import com.gmail.andrewandy.customoregen.generator.IslandRegionGenerator;
 import com.gmail.andrewandy.customoregen.generator.Priority;
 import com.gmail.andrewandy.customoregen.util.ItemWrapper;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.GsonBuilder;
 import org.bukkit.Location;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
@@ -12,8 +10,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import world.bentobox.bentobox.database.objects.Island;
 
-import java.lang.reflect.Type;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -22,15 +18,12 @@ import java.util.UUID;
  */
 public class IslandOreGenerator extends IslandRegionGenerator {
 
-    private static final Type blockStateChanceType = new TypeToken<Map<String, Integer>>() {
-    }.getType();
-
     private GenerationChanceWrapper spawnChances;
 
 
     public IslandOreGenerator(UUID generatorID) {
         super(generatorID);
-        String jsonMapped = getDataSection().getString("BlockStateChances");
+        String jsonMapped = getDataSection().getString("SpawnChanceWrapper");
         setSpawnChances(jsonMapped);
     }
 
@@ -62,7 +55,7 @@ public class IslandOreGenerator extends IslandRegionGenerator {
     }
 
     private void setSpawnChances(String serial) {
-        spawnChances = new GsonBuilder().create().fromJson(serial, blockStateChanceType);
+        spawnChances = new GenerationChanceWrapper(serial);
     }
 
     @Override
@@ -100,6 +93,6 @@ public class IslandOreGenerator extends IslandRegionGenerator {
         super.writeToMeta(original);
         ItemWrapper wrapper = ItemWrapper.wrap(original);
         this.spawnChances = this.spawnChances == null ? new GenerationChanceWrapper() : this.spawnChances;
-        wrapper.setString("BlockStateChances", this.spawnChances.serialise());
+        wrapper.setString("SpawnChanceWrapper", this.spawnChances.serialise());
     }
 }

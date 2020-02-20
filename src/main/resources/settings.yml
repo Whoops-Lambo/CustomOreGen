@@ -1,8 +1,21 @@
 #Priority list: LOWEST, LOW, NORMAL, HIGH, HIGHEST
 #Priorities represent whether the priority at which generators have over the final generated block
 #Default settings for all islands.
+OverworldSettings:
+  MaxLevel: 1
+  CurrentLevel: 1
+  Levels:
+    1:
+      DIAMOND_ORE: 5
+      EMERALD_ORE: 5
+      LAPIS_ORE: 10
+      REDSTONE_ORE: 10
+      GOLD_ORE: 10
+      IRON_ORE: 15
+      COAL_ORE: 20
+      COBBLESTONE: 25
+#The priority cannot be manually set for the island generator. It will always be one higher than that of the overworld generator.
 IslandSettings:
-  Priority: NORMAL
   MaxLevel: 3
   CurrentLevel: 1
   Levels:
@@ -37,18 +50,3 @@ IslandSettings:
       COAL_ORE: 15
       SMOOTH_STONE: 50
       COBBLESTONE: 50
-
-OverworldSettings:
-  Priority: NORMAL
-  MaxLevel: 1
-  CurrentLevel: 1
-  Levels:
-    1:
-      DIAMOND_ORE: 5
-      EMERALD_ORE: 5
-      LAPIS_ORE: 10
-      REDSTONE_ORE: 10
-      GOLD_ORE: 10
-      IRON_ORE: 15
-      COAL_ORE: 20
-      COBBLESTONE: 25

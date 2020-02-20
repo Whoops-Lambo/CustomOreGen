@@ -1,21 +1,20 @@
 package com.gmail.andrewandy.customoregen;
 
 import com.gmail.andrewandy.corelib.util.Common;
+import com.gmail.andrewandy.customoregen.generator.AbstractGenerator;
 import com.gmail.andrewandy.customoregen.generator.Priority;
+import com.gmail.andrewandy.customoregen.generator.builtins.GenerationChanceWrapper;
 import com.gmail.andrewandy.customoregen.generator.builtins.OverworldGenerator;
+import com.gmail.andrewandy.customoregen.hooks.skyblock.BSkyblockHook;
+import com.gmail.andrewandy.customoregen.listener.CobbleGeneratorHandler;
 import com.gmail.andrewandy.customoregen.util.GeneratorManager;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.logging.Level;
 
 public class CustomOreGen extends JavaPlugin {
@@ -35,6 +34,7 @@ public class CustomOreGen extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        long time = System.currentTimeMillis();
         super.onEnable();
         instance = this;
         Common.setPrefix(logPrefix);
@@ -43,14 +43,38 @@ public class CustomOreGen extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        setupAbstractGenerator();
         loadOverworldGenerator();
-        Common.log(Level.INFO, "&b Plugin has been enabled!");
+        setupCobbleHandler();
+        loadHooks();
+        Common.log(Level.INFO, "&bPlugin has been enabled! Took " + (System.currentTimeMillis() - time) + "ms");
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
-        Common.log(Level.INFO, "&e Plugin has been disabled.");
+        AbstractGenerator.globalUpdateFile();
+        Common.log(Level.INFO, "&ePlugin has been disabled.");
+    }
+
+    private void setupAbstractGenerator() {
+        File saveFile = new File(getDataFolder().getAbsolutePath(), "generators.yml");
+        if (!saveFile.isFile())
+            try {
+                AbstractGenerator.setDataFile(saveFile);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                Common.log(Level.SEVERE, "&cUnable to set up generator database!");
+            }
+    }
+
+    private void setupCobbleHandler() {
+        Common.log(Level.INFO, "&BSetting up generation listener");
+        getServer().getPluginManager().registerEvents(new CobbleGeneratorHandler(), instance);
+    }
+
+    private void loadHooks() {
+        BSkyblockHook.getInstance();
     }
 
     private void loadConfig() throws IOException {
@@ -69,26 +93,57 @@ public class CustomOreGen extends JavaPlugin {
                 Common.log(Level.SEVERE, "&caUnable to copy over the default settings!");
                 return;
             }
-            Files.copy(stream, file.toPath());
+            //Copy contents
+            byte[] buffer = new byte[1024];
+            int length;
+            OutputStream outputStream = new FileOutputStream(file);
+            while ((length = stream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+            outputStream.close();
+            stream.close();
         }
         cfg = YamlConfiguration.loadConfiguration(file);
     }
 
     private void loadOverworldGenerator() {
+        Common.log(Level.INFO, "&bLoading Settings for the Overworld Generator!");
         ConfigurationSection section = cfg.getConfigurationSection("OverworldSettings");
         if (section == null) {
             cfg.createSection("OverworldSettings");
             return;
         }
-        Priority priority = Priority.valueOf(section.getString("Priority"));
-        int maxLevel = cfg.getInt("MaxLevel");
-        int currentLevel = cfg.getInt("CurrentLevel");
-        if (maxLevel < 0 || currentLevel > maxLevel) {
+        Priority priority = Priority.NORMAL;
+        int maxLevel = section.getInt("MaxLevel");
+        int currentLevel = section.getInt("CurrentLevel");
+        if (maxLevel < 1 || currentLevel > maxLevel) {
             Common.log(Level.SEVERE, "&cInvalid Config file detected!",
-                    "&cMax level is less than 0 or current level is greater than the max level!");
+                    "&cMax level is less than 1 or current level is greater than the max level!");
             return;
         }
-        OverworldGenerator.setInstance(new OverworldGenerator(maxLevel, currentLevel, priority));
+        OverworldGenerator generator = new OverworldGenerator(maxLevel, currentLevel, priority);
+        ConfigurationSection levels = section.getConfigurationSection("Levels");
+        if (levels != null) {
+            levels = levels.getConfigurationSection("1");
+            GenerationChanceWrapper chances = generator.getSpawnChances();
+            assert levels != null;
+            for (String key : levels.getKeys(false)) {
+                try {
+                    Material material = Material.getMaterial(key);
+                    int numerator = levels.getInt(key);
+                    if (material == null || numerator < 1) {
+                        Common.log(Level.WARNING, "&eFound invalid block spawn. Skipping now.");
+                        continue;
+                    }
+                    chances.addBlockChance(Bukkit.createBlockData(material), numerator);
+                } catch (IllegalArgumentException ex) {
+                    Common.log(Level.WARNING, "&eFound invalid block spawn. Skipping now.");
+                }
+            }
+        } else {
+            Common.log(Level.INFO, "&aFound an empty levels section for the overworld generator, skipping...");
+        }
+        OverworldGenerator.setInstance(generator);
         Common.log(Level.INFO, "&b[Generators] Loaded the Overworld Generator!");
     }
 }

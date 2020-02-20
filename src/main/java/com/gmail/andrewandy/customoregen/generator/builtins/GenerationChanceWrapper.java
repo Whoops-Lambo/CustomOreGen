@@ -41,8 +41,7 @@ public class GenerationChanceWrapper {
         int currentNumerator = 0;
         for (Map.Entry<String, Integer> entry : blockStateChances.entrySet()) {
             int originalNumerator = entry.getValue();
-            int actualNumerator = originalNumerator * denominator;
-            chanceMap.put(new int[]{currentNumerator++, currentNumerator += actualNumerator}, entry.getKey());
+            chanceMap.put(new int[]{currentNumerator++, currentNumerator += originalNumerator}, entry.getKey());
         }
     }
 
@@ -71,7 +70,7 @@ public class GenerationChanceWrapper {
     }
 
     public BlockData getRandomBlock() {
-        int randomNumerator = ThreadLocalRandom.current().nextInt(denominator);
+        int randomNumerator = ThreadLocalRandom.current().nextInt(1, denominator);
         for (Map.Entry<int[], String> entry : chanceMap.entrySet()) {
             int lowerBound = entry.getKey()[0];
             int upperBound = entry.getKey()[1];

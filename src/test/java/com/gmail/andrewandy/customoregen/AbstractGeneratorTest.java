@@ -23,11 +23,11 @@ public class AbstractGeneratorTest {
         File file;
         try {
             file = File.createTempFile("GeneratorDataTest", ".yml");
+            AbstractGenerator.setDataFile(file);
         } catch (IOException ex) {
             Assert.fail(ex.getMessage());
             return;
         }
-        AbstractGenerator.setDataFile(file);
         file.deleteOnExit();
     }
 

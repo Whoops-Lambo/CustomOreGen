@@ -45,9 +45,10 @@ public class GeneratorManager {
     public void registerUniversalGenerator(SingleInstanceGenerator generator, boolean overwrite) {
         if (overwrite) {
             generators.removeIf(gen -> Common.classEquals(gen.getClass(), generator.getClass()));
-        } else if (generators.stream().noneMatch(gen -> Common.classEquals(gen.getClass(), generator.getClass()))) {
-            generators.add(generator);
+        } else if (generators.stream().anyMatch(gen -> Common.classEquals(gen.getClass(), generator.getClass()))) {
+            return;
         }
+        generators.add(generator);
     }
 
     public void unregisterUniversalGenerator(Class<? extends SingleInstanceGenerator> clazz) {

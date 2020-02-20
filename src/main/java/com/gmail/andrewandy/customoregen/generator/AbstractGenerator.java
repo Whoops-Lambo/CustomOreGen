@@ -57,7 +57,7 @@ public abstract class AbstractGenerator implements BlockGenerator {
             this.maxLevel = maxLevel;
             this.priority = Priority.valueOf(wrapper.getString("Priority"));
             if (level > maxLevel || level < 1) {
-                throw new IllegalStateException("Invalid Spawner params detected when deserialising from ItemMeta!");
+                throw new IllegalStateException("Invalid Generator params detected when deserialising from ItemMeta!");
             }
             generatorID = UUID.fromString(wrapper.getString("UUID"));
         } catch (IllegalArgumentException ex) {
@@ -80,14 +80,17 @@ public abstract class AbstractGenerator implements BlockGenerator {
         }
         this.maxLevel = section.getInt("MaxLevel");
         this.level = section.getInt("Level");
-        if (level < 0 || maxLevel < level) {
+        if (level < 0 || level > maxLevel) {
             throw new IllegalArgumentException("Invalid Generator! Level must be positive, AND MaxLevel must be greater or equal to the level!");
         }
         this.generatorID = fromID;
     }
 
-    public static void setDataFile(File file) {
+    public static void setDataFile(File file) throws IOException {
         saveFile = Objects.requireNonNull(file);
+        if (!saveFile.isFile()) {
+            saveFile.createNewFile();
+        }
     }
 
     /**
@@ -123,6 +126,17 @@ public abstract class AbstractGenerator implements BlockGenerator {
         } catch (ReflectiveOperationException ex) {
             Common.log(Level.SEVERE, "&c[Data] Error occurred when trying to reconstruct a generator!");
             throw new IllegalStateException(ex);
+        }
+    }
+
+    public static void globalUpdateFile() {
+        try {
+            if (saveFile == null) {
+                saveFile = new File(CustomOreGen.getInstance().getDataFolder().getAbsolutePath(), "GeneratorData.yml");
+            }
+            data.save(saveFile);
+        } catch (IOException ex) {
+            throw new IllegalStateException("Unable to save to file.");
         }
     }
 
@@ -193,7 +207,6 @@ public abstract class AbstractGenerator implements BlockGenerator {
         section.set("Priority", priority.name());
     }
 
-
     public ItemStack toBaseItem(Material material) {
         ItemStack i = new ItemStack(material);
         ItemMeta meta = i.getItemMeta();
@@ -215,14 +228,7 @@ public abstract class AbstractGenerator implements BlockGenerator {
 
     public final void updateFile() {
         save();
-        try {
-            if (saveFile == null) {
-                saveFile = new File(CustomOreGen.getInstance().getDataFolder().getAbsolutePath(), "GeneratorData.yml");
-            }
-            data.save(saveFile);
-        } catch (IOException ex) {
-            throw new IllegalStateException("Unable to save to file.");
-        }
+        globalUpdateFile();
     }
 
     @Override

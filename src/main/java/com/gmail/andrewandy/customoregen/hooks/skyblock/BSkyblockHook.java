@@ -4,6 +4,8 @@ import com.gmail.andrewandy.corelib.util.Common;
 import com.gmail.andrewandy.corelib.util.Config;
 import com.gmail.andrewandy.customoregen.CustomOreGen;
 import com.gmail.andrewandy.customoregen.generator.Priority;
+import com.gmail.andrewandy.customoregen.generator.builtins.GenerationChanceWrapper;
+import com.gmail.andrewandy.customoregen.generator.builtins.OverworldGenerator;
 import com.gmail.andrewandy.customoregen.generator.builtins.UniversalIslandGenerator;
 import com.gmail.andrewandy.customoregen.hooks.BentoBoxHook;
 import org.bukkit.Material;
@@ -41,16 +43,24 @@ public final class BSkyblockHook extends BentoBoxHook {
     private void loadDefaultGenerator() {
         ConfigurationSection section = skyblockConfig.getConfigurationSection("IslandSettings");
         assert section != null;
-        Priority priority = Priority.valueOf(section.getString("Priority"));
+        Priority priority;
+        OverworldGenerator instance = OverworldGenerator.getInstance();
+        priority = instance == null ? Priority.NORMAL : instance.getPriority().getNext();
         int maxLevel = section.getInt("MaxLevel");
         int currentLevel = section.getInt("CurrentLevel");
         UniversalIslandGenerator islandGenerator = new UniversalIslandGenerator(maxLevel, currentLevel, priority);
-        for (int index = 0; index < maxLevel; index++) {
-            ConfigurationSection level = section.getConfigurationSection("" + index);
+        ConfigurationSection levelSection = section.getConfigurationSection("Levels");
+        if (levelSection == null) {
+            Common.log(Level.WARNING, "[Hooks] &eEmpty level section found! Skipping this generator.");
+            return;
+        }
+        for (int index = 1; index <= maxLevel; index++) {
+            ConfigurationSection level = levelSection.getConfigurationSection("" + index);
             if (level == null) {
                 Common.log(Level.WARNING, "[Hooks] &cEmpty Level section found! Skipping...");
                 continue;
             }
+            GenerationChanceWrapper spawnChances = islandGenerator.getSpawnChances(index);
             for (String key : level.getKeys(false)) {
                 int chance = level.getInt(key);
                 Material material = Material.getMaterial(key);
@@ -58,7 +68,7 @@ public final class BSkyblockHook extends BentoBoxHook {
                     Common.log(Level.WARNING, "[Hooks] &cInvalid Material found! Skipping...");
                     continue;
                 }
-                islandGenerator.getSpawnChanceWrapper().addBlockChance(material.createBlockData(), chance);
+                spawnChances.addBlockChance(material.createBlockData(), chance);
             }
         }
         UniversalIslandGenerator.setInstance(islandGenerator);
@@ -66,7 +76,8 @@ public final class BSkyblockHook extends BentoBoxHook {
 
     @Override
     public void onEnable() {
-        getInstance();
+        loadDefaultGenerator();
+        instance = new BSkyblockHook();
     }
 
     @Override

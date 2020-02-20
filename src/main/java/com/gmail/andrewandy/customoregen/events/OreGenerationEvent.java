@@ -13,7 +13,7 @@ import java.util.Objects;
 public class OreGenerationEvent extends Event implements Cancellable {
 
     protected static HandlerList handlers = new HandlerList();
-    private boolean cancel;
+    private boolean cancel = false;
     private BlockData toBlock;
 
     public OreGenerationEvent(BlockData newBlock) {

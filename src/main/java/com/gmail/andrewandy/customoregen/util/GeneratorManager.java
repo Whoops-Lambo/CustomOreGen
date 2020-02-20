@@ -6,9 +6,7 @@ import com.gmail.andrewandy.customoregen.generator.Priority;
 import com.gmail.andrewandy.customoregen.generator.SingleInstanceGenerator;
 import org.bukkit.Location;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -26,13 +24,14 @@ public class GeneratorManager {
     public List<BlockGenerator> getGeneratorsAt(Location location) {
         List<BlockGenerator> generators = this.generators.stream()
                 .filter(blockGenerator -> blockGenerator.isActiveAtLocation(location)).collect(Collectors.toList());
+        List<BlockGenerator> ret = new ArrayList<>(generators.size());
         Priority[] priorities = Priority.values();
         for (int index = 0; index < priorities.length; ) {
             Priority priority = priorities[index++];
-            generators.addAll(generators.stream()
+            ret.addAll(generators.stream()
                     .filter(blockGenerator -> blockGenerator.getPriority() == priority).collect(Collectors.toSet()));
         }
-        return generators;
+        return ret;
     }
 
     public void registerGenerator(BlockGenerator generator) {

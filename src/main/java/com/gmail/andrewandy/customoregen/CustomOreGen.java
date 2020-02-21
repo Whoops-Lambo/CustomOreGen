@@ -76,7 +76,7 @@ public class CustomOreGen extends JavaPlugin {
     }
 
     private void loadHooks() {
-      BSkyblockHook.getInstance();
+        BSkyblockHook.getInstance();
     }
 
     public YamlConfiguration getCfg() {
@@ -110,13 +110,15 @@ public class CustomOreGen extends JavaPlugin {
                 }
             }
             CustomOreGen.cfg = YamlConfiguration.loadConfiguration(file);
-        }
-        catch (IOException ex) {
-            stream.close();
+        } catch (IOException ex) {
+            throw new IOException(ex);
+        } finally {
+            if (stream != null) {
+                stream.close();
+            }
             if (outputStream != null) {
                 outputStream.close();
             }
-            throw new IOException(ex);
         }
     }
 

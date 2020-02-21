@@ -1,47 +1,41 @@
 package com.gmail.andrewandy.customoregen.hooks.skyblock;
 
 import com.gmail.andrewandy.corelib.util.Common;
-import com.gmail.andrewandy.corelib.util.Config;
 import com.gmail.andrewandy.customoregen.CustomOreGen;
 import com.gmail.andrewandy.customoregen.generator.Priority;
 import com.gmail.andrewandy.customoregen.generator.builtins.GenerationChanceWrapper;
 import com.gmail.andrewandy.customoregen.generator.builtins.OverworldGenerator;
-import com.gmail.andrewandy.customoregen.generator.builtins.UniversalIslandGenerator;
 import com.gmail.andrewandy.customoregen.hooks.BentoBoxHook;
+import com.gmail.andrewandy.customoregen.hooks.skyblock.generators.UniversalIslandGenerator;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.logging.Level;
 
+/**
+ * Hooks into BSkyblock and enables
+ */
 public final class BSkyblockHook extends BentoBoxHook {
 
     private static BSkyblockHook instance;
-    private static Config skyblockConfig;
 
     private BSkyblockHook() {
         super("BSkyblock");
         if (super.getAddon() == null) {
-            Common.log(Level.INFO, "[Hooks] &aBSkyblock was not found.");
+            Common.log(Level.INFO, "&a[Hooks] &eBSkyblock was not found.");
             return;
         }
-        skyblockConfig = new Config("settings.yml", CustomOreGen.getInstance());
         loadDefaultGenerator();
-        Common.log(Level.INFO, "[Hooks] &bHooked into BSkyblock!");
+        Common.log(Level.INFO, "&a[Hooks] &bHooked into BSkyblock!");
     }
 
-    public static Config getSkyblockConfig() {
-        return skyblockConfig;
-    }
 
     public static BSkyblockHook getInstance() {
-        if (instance == null) {
-            instance = new BSkyblockHook();
-        }
         return instance;
     }
 
     private void loadDefaultGenerator() {
-        ConfigurationSection section = skyblockConfig.getConfigurationSection("IslandSettings");
+        ConfigurationSection section = CustomOreGen.getInstance().getCfg().getConfigurationSection("IslandSettings");
         assert section != null;
         Priority priority;
         OverworldGenerator instance = OverworldGenerator.getInstance();

@@ -1,4 +1,4 @@
-package com.gmail.andrewandy.customoregen.generator.builtins;
+package com.gmail.andrewandy.customoregen.hooks.skyblock.generators;
 
 import com.gmail.andrewandy.corelib.util.Common;
 import com.gmail.andrewandy.customoregen.CustomOreGen;
@@ -16,7 +16,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 /**
- * Represents a generator which fundamentally is the same as {@link com.gmail.andrewandy.customoregen.generator.builtins.IslandOreGenerator}
+ * Represents a generator which fundamentally is the same as {@link IslandOreGenerator}
  * but works for all islands.
  */
 public class UniversalIslandGenerator extends ChanceGenerator implements SingleInstanceGenerator {

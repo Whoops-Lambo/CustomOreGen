@@ -8,20 +8,19 @@ import org.bukkit.command.CommandSender;
 public class CreateCommand extends NestedCommand {
 
     private static final CreateCommand instance = new CreateCommand();
-
-    public static CreateCommand getInstance() {
-        return instance;
-    }
+    private Menu menu = new ChestMenu(45);
 
     private CreateCommand() {
         super("create");
+    }
+
+    public static CreateCommand getInstance() {
+        return instance;
     }
 
     @Override
     public boolean onCommand(CommandSender commandSender, String[] args) {
         return true;
     }
-
-    private Menu menu = new ChestMenu(45);
 
 }

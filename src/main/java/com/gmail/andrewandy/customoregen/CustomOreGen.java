@@ -79,6 +79,10 @@ public class CustomOreGen extends JavaPlugin {
         BSkyblockHook.getInstance();
     }
 
+    public YamlConfiguration getCfg() {
+        return cfg;
+    }
+
     public void loadConfig() throws IOException {
         InputStream stream = this.getClassLoader().getResourceAsStream("settings.yml");
         if (stream == null) {

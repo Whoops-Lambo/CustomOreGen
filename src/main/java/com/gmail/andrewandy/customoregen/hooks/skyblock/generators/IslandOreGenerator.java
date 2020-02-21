@@ -1,7 +1,7 @@
-package com.gmail.andrewandy.customoregen.generator.builtins;
+package com.gmail.andrewandy.customoregen.hooks.skyblock.generators;
 
-import com.gmail.andrewandy.customoregen.generator.IslandRegionGenerator;
 import com.gmail.andrewandy.customoregen.generator.Priority;
+import com.gmail.andrewandy.customoregen.generator.builtins.GenerationChanceWrapper;
 import com.gmail.andrewandy.customoregen.util.ItemWrapper;
 import org.bukkit.Location;
 import org.bukkit.block.data.BlockData;

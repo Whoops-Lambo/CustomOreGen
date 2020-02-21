@@ -1,5 +1,8 @@
-package com.gmail.andrewandy.customoregen.generator;
+package com.gmail.andrewandy.customoregen.hooks.skyblock.generators;
 
+import com.gmail.andrewandy.customoregen.generator.AbstractGenerator;
+import com.gmail.andrewandy.customoregen.generator.Priority;
+import com.gmail.andrewandy.customoregen.hooks.skyblock.BSkyblockHook;
 import com.gmail.andrewandy.customoregen.util.ItemWrapper;
 import com.gmail.andrewandy.customoregen.util.Region;
 import org.bukkit.Location;
@@ -19,6 +22,7 @@ public abstract class IslandRegionGenerator extends AbstractGenerator {
 
     public IslandRegionGenerator(UUID generatorID) {
         super(generatorID);
+        validateHook();
         ConfigurationSection section = getDataSection();
         islandID = section.getString("IslandID");
     }
@@ -29,6 +33,7 @@ public abstract class IslandRegionGenerator extends AbstractGenerator {
 
     public IslandRegionGenerator(ItemMeta meta) {
         super(meta);
+        validateHook();
         this.islandID = ItemWrapper.wrap(meta).getString("islandID");
     }
 
@@ -46,9 +51,16 @@ public abstract class IslandRegionGenerator extends AbstractGenerator {
 
     public IslandRegionGenerator(String islandID, int maxLevel, int level, Priority priority) {
         super(maxLevel, level, priority);
+        validateHook();
         this.islandID = Objects.requireNonNull(islandID);
         if (!BentoBox.getInstance().getIslands().getIslandById(islandID).isPresent()) {
             throw new IllegalArgumentException("Invalid IslandID Specified!");
+        }
+    }
+
+    private static void validateHook() throws IllegalStateException {
+        if (BSkyblockHook.getInstance() == null) {
+            throw new IllegalStateException("Skyblock is not enabled!");
         }
     }
 

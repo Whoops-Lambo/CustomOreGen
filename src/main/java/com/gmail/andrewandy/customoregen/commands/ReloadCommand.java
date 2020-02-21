@@ -3,6 +3,7 @@ package com.gmail.andrewandy.customoregen.commands;
 import com.gmail.andrewandy.corelib.api.command.NestedCommand;
 import com.gmail.andrewandy.corelib.util.Common;
 import com.gmail.andrewandy.customoregen.CustomOreGen;
+import com.gmail.andrewandy.customoregen.hooks.skyblock.BSkyblockHook;
 import org.bukkit.command.CommandSender;
 
 import java.io.IOException;
@@ -27,6 +28,7 @@ public class ReloadCommand extends NestedCommand {
         }
         try {
             CustomOreGen.getInstance().loadConfig();
+            BSkyblockHook.getInstance().onEnable();
             Common.tell(commandSender, "&3&l[CustomOreGen] &eSettings Reloaded!");
         } catch (IOException e) {
             Common.tell(commandSender, "&c&l[CustomOreGen] &cError occurred, please check console.");

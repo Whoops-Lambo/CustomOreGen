@@ -14,6 +14,7 @@ import org.bukkit.event.block.BlockFormEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -52,17 +53,17 @@ public class CobbleGeneratorHandler implements Listener {
         Material originalType = originalState.getType();
         if (originalType.equals(Material.WATER) || originalType.equals(Material.LAVA) && (targetType.equals(Material.COBBLESTONE) || targetType.equals(Material.STONE))) {
             //Execute the generators, sequentially based on priority.
-            Collection<BlockGenerator> generators = CustomOreGen.getGeneratorManager().getGeneratorsAt(original.getLocation());
+            List<BlockGenerator> generators = CustomOreGen.getGeneratorManager().getGeneratorsAt(original.getLocation());
             event.setCancelled(generators.size() > 0);
-            boolean[] globalExecuted = new boolean[]{false};
+            BlockGenerator highestGlobal = null;
+            for (BlockGenerator generator : generators) {
+                highestGlobal = generator.isGlobal() ? generator : highestGlobal;
+            }
+            BlockGenerator finalGlobal = highestGlobal;
             generators.forEach(gen -> {
-                if (gen.isGlobal()) {
-                    //Check if a global generated was already executed
-                    if (globalExecuted[0]) {
-                        //If so, skip.
-                        return;
-                    }
-                    globalExecuted[0] = true;
+                if (gen.isGlobal() && gen != finalGlobal) {
+                    assert finalGlobal != null;
+                    return;
                 }
                 //Should be active because this is checked in #getGeneratorsAt.
                 assert gen.isActiveAtLocation(original.getLocation());

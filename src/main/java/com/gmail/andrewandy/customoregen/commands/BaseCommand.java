@@ -7,6 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BaseCommand implements com.gmail.andrewandy.corelib.api.command.BaseCommand {
 
@@ -42,7 +43,10 @@ public class BaseCommand implements com.gmail.andrewandy.corelib.api.command.Bas
 
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return Collections.emptyList();
+        String str = strings[0];
+        List<String> labels = new ArrayList<>(nestedCommands.size());
+        nestedCommands.stream().filter(cmd -> cmd.getLabel().startsWith(str)).forEach(cmd -> labels.add(cmd.getLabel()));
+        return labels.stream().sorted(Comparator.naturalOrder()).collect(Collectors.toList());
     }
 
     private Optional<NestedCommand> getNested(String label, boolean startsWith) {

@@ -76,7 +76,7 @@ public class CustomOreGen extends JavaPlugin {
     }
 
     private void loadHooks() {
-        BSkyblockHook.getInstance();
+      BSkyblockHook.getInstance();
     }
 
     public YamlConfiguration getCfg() {
@@ -137,7 +137,7 @@ public class CustomOreGen extends JavaPlugin {
                 try {
                     Material material = Material.getMaterial(key);
                     int numerator = levels.getInt(key);
-                    if (material == null || numerator < 1) {
+                    if (material == null || numerator < 1 || !material.isBlock()) {
                         Common.log(Level.WARNING, "&eFound invalid block spawn. Skipping now.");
                         continue;
                     }

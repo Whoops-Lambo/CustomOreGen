@@ -27,10 +27,14 @@ public final class BSkyblockHook extends BentoBoxHook {
         }
         loadDefaultGenerator();
         Common.log(Level.INFO, "&a[Hooks] &bHooked into BSkyblock!");
+        instance = this;
     }
 
 
     public static BSkyblockHook getInstance() {
+        if (instance == null) {
+            new BSkyblockHook();
+        }
         return instance;
     }
 
@@ -45,21 +49,21 @@ public final class BSkyblockHook extends BentoBoxHook {
         UniversalIslandGenerator islandGenerator = new UniversalIslandGenerator(maxLevel, currentLevel, priority);
         ConfigurationSection levelSection = section.getConfigurationSection("Levels");
         if (levelSection == null) {
-            Common.log(Level.WARNING, "[Hooks] &eEmpty level section found! Skipping this generator.");
+            Common.log(Level.WARNING, "[&aHooks] &eEmpty level section found! Skipping this generator.");
             return;
         }
         for (int index = 1; index <= maxLevel; index++) {
             ConfigurationSection level = levelSection.getConfigurationSection("" + index);
             if (level == null) {
-                Common.log(Level.WARNING, "[Hooks] &cEmpty Level section found! Skipping...");
+                Common.log(Level.WARNING, "&a[Hooks] &cEmpty Level section found! Skipping...");
                 continue;
             }
             GenerationChanceWrapper spawnChances = islandGenerator.getSpawnChances(index);
             for (String key : level.getKeys(false)) {
                 int chance = level.getInt(key);
                 Material material = Material.getMaterial(key);
-                if (material == null) {
-                    Common.log(Level.WARNING, "[Hooks] &cInvalid Material found! Skipping...");
+                if (material == null || !material.isBlock() || chance < 1) {
+                    Common.log(Level.WARNING, "&a[Hooks] &cInvalid Material found! Skipping...");
                     continue;
                 }
                 spawnChances.addBlockChance(material.createBlockData(), chance);
@@ -71,7 +75,6 @@ public final class BSkyblockHook extends BentoBoxHook {
     @Override
     public void onEnable() {
         loadDefaultGenerator();
-        instance = new BSkyblockHook();
     }
 
     @Override

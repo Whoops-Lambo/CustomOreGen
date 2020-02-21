@@ -53,30 +53,45 @@ public class GenerationChanceWrapper {
      *               an example of this works.
      */
     public GenerationChanceWrapper addBlockChance(BlockData block, int chance) {
-        if (blockStateChances.containsKey(block.getAsString())) {
-            blockStateChances.replace(block.getAsString(), chance);
+       return addBlockChance(Objects.requireNonNull(block).getAsString(), chance);
+    }
+
+    public GenerationChanceWrapper addBlockChance(String blockData, int chance) {
+        if (blockStateChances.containsKey(Objects.requireNonNull(blockData))) {
+            blockStateChances.replace(blockData, chance);
         } else {
-            blockStateChances.put(block.getAsString(), chance);
+            blockStateChances.put(blockData, chance);
         }
         recalculateChances();
         return this;
     }
 
     public GenerationChanceWrapper removeBlockChance(BlockData block) {
-        blockStateChances.remove(block.getAsString());
-        chanceMap.values().remove(block.getAsString());
+        return removeBlockChance(Objects.requireNonNull(block));
+    }
+
+    public GenerationChanceWrapper removeBlockChance(String block) {
+        blockStateChances.remove(block);
+        chanceMap.values().remove(block);
         recalculateChances();
         return this;
     }
 
     public BlockData getRandomBlock() {
+        return Bukkit.createBlockData(getRandomRawBlockData());
+    }
+
+    public double getPercentageChance(String blockData) {
+        return 100 * blockStateChances.get(blockData) / (double) denominator;
+    }
+
+    public String getRandomRawBlockData() {
         int randomNumerator = ThreadLocalRandom.current().nextInt(1, denominator);
         for (Map.Entry<int[], String> entry : chanceMap.entrySet()) {
             int lowerBound = entry.getKey()[0];
             int upperBound = entry.getKey()[1];
             if (randomNumerator >= lowerBound && randomNumerator <= upperBound) {
-                String raw = entry.getValue();
-                return Bukkit.createBlockData(raw);
+                return entry.getValue();
             }
         }
         throw new IllegalStateException("Unable to find block data!");

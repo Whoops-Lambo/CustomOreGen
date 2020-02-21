@@ -46,7 +46,7 @@ public abstract class ChanceGenerator extends AbstractGenerator {
             return;
         }
         for (int index = 0; index < maxLevel(); index++) {
-            String jsonMapped = section.getString("" + index);
+            String jsonMapped = section.getString(Integer.toString(index));
             setSpawnChance(index, jsonMapped);
         }
     }
@@ -61,7 +61,7 @@ public abstract class ChanceGenerator extends AbstractGenerator {
         spawnChances = spawnChances == null ? new GenerationChanceWrapper() : spawnChances;
         ConfigurationSection section = getDataSection().createSection("Levels");
         for (int index = 0; index < maxLevel(); index++) {
-            ConfigurationSection levelSection = section.createSection("" + index);
+            ConfigurationSection levelSection = section.createSection(Integer.toString(index));
             GenerationChanceWrapper chances = levelChance.get(index);
             levelSection.set("Data", chances == null ? null : chances.serialise());
         }

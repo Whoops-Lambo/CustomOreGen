@@ -85,31 +85,39 @@ public class CustomOreGen extends JavaPlugin {
 
     public void loadConfig() throws IOException {
         InputStream stream = this.getClassLoader().getResourceAsStream("settings.yml");
-        if (stream == null) {
-            Common.log(Level.SEVERE, "&cUnable to locate settings file from jar!");
-            return;
-        }
-        File folder = getDataFolder();
-        if (!folder.isDirectory()) {
-            folder.mkdir();
-        }
-        File file = new File(folder.getAbsolutePath(), "settings.yml");
-        if (!file.isFile()) {
-            if (!file.createNewFile()) {
-                Common.log(Level.SEVERE, "&caUnable to copy over the default settings!");
+        OutputStream outputStream = null;
+        try {
+            if (stream == null) {
+                Common.log(Level.SEVERE, "&cUnable to locate settings file from jar!");
                 return;
             }
-            //Copy contents
-            byte[] buffer = new byte[1024];
-            int length;
-            OutputStream outputStream = new FileOutputStream(file);
-            while ((length = stream.read(buffer)) > 0) {
-                outputStream.write(buffer, 0, length);
+            File folder = getDataFolder();
+            if (!folder.isDirectory()) {
+                folder.mkdir();
             }
-            outputStream.close();
-            stream.close();
+            File file = new File(folder.getAbsolutePath(), "settings.yml");
+            if (!file.isFile()) {
+                if (!file.createNewFile()) {
+                    Common.log(Level.SEVERE, "&caUnable to copy over the default settings!");
+                    return;
+                }
+                //Copy contents
+                byte[] buffer = new byte[1024];
+                int length;
+                outputStream = new FileOutputStream(file);
+                while ((length = stream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, length);
+                }
+            }
+            CustomOreGen.cfg = YamlConfiguration.loadConfiguration(file);
         }
-        cfg = YamlConfiguration.loadConfiguration(file);
+        catch (IOException ex) {
+            stream.close();
+            if (outputStream != null) {
+                outputStream.close();
+            }
+            throw new IOException(ex);
+        }
     }
 
     private void loadOverworldGenerator() {

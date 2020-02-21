@@ -10,7 +10,7 @@ import java.util.*;
 
 public abstract class ChanceGenerator extends AbstractGenerator {
 
-    private GenerationChanceWrapper spawnChances;
+    private GenerationChanceWrapper spawnChances; //TODO remove this
     private List<GenerationChanceWrapper> levelChance;
 
     protected ChanceGenerator(int maxLevel, int level) {

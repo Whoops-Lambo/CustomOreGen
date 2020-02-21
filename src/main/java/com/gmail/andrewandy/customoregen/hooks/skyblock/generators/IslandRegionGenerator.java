@@ -58,7 +58,7 @@ public abstract class IslandRegionGenerator extends AbstractGenerator {
         }
     }
 
-    private static void validateHook() throws IllegalStateException {
+    public static void validateHook() throws IllegalStateException {
         if (BSkyblockHook.getInstance() == null) {
             throw new IllegalStateException("Skyblock is not enabled!");
         }

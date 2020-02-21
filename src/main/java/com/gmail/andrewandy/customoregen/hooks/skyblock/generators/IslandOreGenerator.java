@@ -23,6 +23,7 @@ public class IslandOreGenerator extends IslandRegionGenerator {
 
     public IslandOreGenerator(UUID generatorID) {
         super(generatorID);
+        validateHook();
         String jsonMapped = getDataSection().getString("SpawnChanceWrapper");
         setSpawnChances(jsonMapped);
     }
@@ -33,6 +34,7 @@ public class IslandOreGenerator extends IslandRegionGenerator {
 
     public IslandOreGenerator(ItemMeta meta) {
         super(meta);
+        validateHook();
         ItemWrapper wrapper = ItemWrapper.wrap(meta);
         String jsonMapped = wrapper.getString("SpawnChanceWrapper");
         setSpawnChances(jsonMapped);
@@ -40,18 +42,22 @@ public class IslandOreGenerator extends IslandRegionGenerator {
 
     public IslandOreGenerator(Island island, int maxLevel, int level) {
         super(island, maxLevel, level);
+        validateHook();
     }
 
     public IslandOreGenerator(Island island, int maxLevel, int level, Priority priority) {
         super(island, maxLevel, level, priority);
+        validateHook();
     }
 
     public IslandOreGenerator(String islandID, int maxLevel, int level) {
         super(islandID, maxLevel, level);
+        validateHook();
     }
 
     public IslandOreGenerator(String islandID, int maxLevel, int level, Priority priority) {
         super(islandID, maxLevel, level, priority);
+        validateHook();
     }
 
     private void setSpawnChances(String serial) {

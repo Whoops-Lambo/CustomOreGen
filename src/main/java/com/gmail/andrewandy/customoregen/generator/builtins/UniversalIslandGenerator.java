@@ -1,5 +1,6 @@
 package com.gmail.andrewandy.customoregen.generator.builtins;
 
+import com.gmail.andrewandy.corelib.util.Common;
 import com.gmail.andrewandy.customoregen.CustomOreGen;
 import com.gmail.andrewandy.customoregen.generator.ChanceGenerator;
 import com.gmail.andrewandy.customoregen.generator.Priority;
@@ -12,6 +13,7 @@ import world.bentobox.bentobox.BentoBox;
 
 import java.util.Objects;
 import java.util.UUID;
+import java.util.logging.Level;
 
 /**
  * Represents a generator which fundamentally is the same as {@link com.gmail.andrewandy.customoregen.generator.builtins.IslandOreGenerator}
@@ -74,7 +76,7 @@ public class UniversalIslandGenerator extends ChanceGenerator implements SingleI
 
     @Override
     public void save() {
-        super.save();
+        Common.log(Level.WARNING, "&e[Generators] Someone tried to save the universal island generator! This is unsupported.");
     }
 
     @Override
@@ -82,4 +84,10 @@ public class UniversalIslandGenerator extends ChanceGenerator implements SingleI
         //Mutates the original meta.
         super.writeToMeta(original);
     }
+
+    @Override
+    public boolean isGlobal() {
+        return true;
+    }
+
 }

@@ -33,7 +33,7 @@ public class CobbleGeneratorHandler implements Listener {
     public static void removeEventAddon(Consumer<BlockFormEvent> addon) {
         addons.remove(addon);
     }
-    
+
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onCobbleGeneration(BlockFormEvent event) {
         //Check if the event was just called, return to prevent an infinite recursion.
@@ -50,13 +50,20 @@ public class CobbleGeneratorHandler implements Listener {
         //Check if the new type is going to be a solid block.
         Material targetType = targetState.getType();
         Material originalType = originalState.getType();
-        Class<?>[] clazz = new Class<?>[1];
         if (originalType.equals(Material.WATER) || originalType.equals(Material.LAVA) && (targetType.equals(Material.COBBLESTONE) || targetType.equals(Material.STONE))) {
             //Execute the generators, sequentially based on priority.
             Collection<BlockGenerator> generators = CustomOreGen.getGeneratorManager().getGeneratorsAt(original.getLocation());
             event.setCancelled(generators.size() > 0);
+            boolean[] globalExecuted = new boolean[]{false};
             generators.forEach(gen -> {
-                clazz[0] = gen.getClass();
+                if (gen.isGlobal()) {
+                    //Check if a global generated was already executed
+                    if (globalExecuted[0]) {
+                        //If so, skip.
+                        return;
+                    }
+                    globalExecuted[0] = true;
+                }
                 //Should be active because this is checked in #getGeneratorsAt.
                 assert gen.isActiveAtLocation(original.getLocation());
                 BlockData toBlock = gen.generateBlockAt(original.getLocation());

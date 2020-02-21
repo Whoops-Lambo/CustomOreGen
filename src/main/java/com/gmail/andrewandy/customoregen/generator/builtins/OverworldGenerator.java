@@ -1,5 +1,6 @@
 package com.gmail.andrewandy.customoregen.generator.builtins;
 
+import com.gmail.andrewandy.corelib.util.Common;
 import com.gmail.andrewandy.customoregen.CustomOreGen;
 import com.gmail.andrewandy.customoregen.generator.ChanceGenerator;
 import com.gmail.andrewandy.customoregen.generator.Priority;
@@ -11,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.UUID;
+import java.util.logging.Level;
 
 /**
  * Represents the default cobblestone generator for the overworld.
@@ -49,6 +51,12 @@ public class OverworldGenerator extends ChanceGenerator implements SingleInstanc
     }
 
     @Override
+    public void save() {
+        Common.log(Level.WARNING, "&e[Generators] Someone tried to save the overworld generator! This is unsupported.");
+        return;
+    }
+
+    @Override
     public BlockData generateBlockAt(Location location) {
         if (!isActiveAtLocation(location)) {
             return null;
@@ -68,5 +76,10 @@ public class OverworldGenerator extends ChanceGenerator implements SingleInstanc
     @Override
     public ItemStack toItemStack() {
         throw new UnsupportedOperationException("Generator cannot be picked up!");
+    }
+
+    @Override
+    public boolean isGlobal() {
+        return true;
     }
 }

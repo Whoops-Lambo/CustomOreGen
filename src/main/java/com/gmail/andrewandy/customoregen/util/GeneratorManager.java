@@ -6,7 +6,10 @@ import com.gmail.andrewandy.customoregen.generator.Priority;
 import com.gmail.andrewandy.customoregen.generator.SingleInstanceGenerator;
 import org.bukkit.Location;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 

@@ -15,6 +15,8 @@ public interface BlockGenerator {
 
     boolean isActiveAtLocation(Location location);
 
+    boolean isGlobal();
+
     int getLevel();
 
     void setLevel(int newLevel);

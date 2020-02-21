@@ -52,4 +52,8 @@ public class TestGenerator extends AbstractGenerator {
         return super.hashCode();
     }
 
+    @Override
+    public boolean isGlobal() {
+        return true;
+    }
 }

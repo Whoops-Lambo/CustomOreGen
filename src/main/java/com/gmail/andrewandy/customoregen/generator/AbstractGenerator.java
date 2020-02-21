@@ -246,4 +246,5 @@ public abstract class AbstractGenerator implements BlockGenerator {
     public int hashCode() {
         return Objects.hash(generatorID, level, maxLevel, priority);
     }
+
 }

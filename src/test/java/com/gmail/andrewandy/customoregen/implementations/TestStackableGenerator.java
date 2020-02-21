@@ -60,4 +60,9 @@ public class TestStackableGenerator extends AbstractStackableGenerator {
     public StackedObject<ItemStack> convertToStacked() {
         return new StackedObject<>(toItemStack());
     }
+
+    @Override
+    public boolean isGlobal() {
+        return false;
+    }
 }

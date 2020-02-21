@@ -95,4 +95,9 @@ public class IslandOreGenerator extends IslandRegionGenerator {
         this.spawnChances = this.spawnChances == null ? new GenerationChanceWrapper() : this.spawnChances;
         wrapper.setString("SpawnChanceWrapper", this.spawnChances.serialise());
     }
+
+    @Override
+    public boolean isGlobal() {
+        return false;
+    }
 }

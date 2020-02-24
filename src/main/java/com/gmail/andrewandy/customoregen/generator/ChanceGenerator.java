@@ -1,6 +1,6 @@
 package com.gmail.andrewandy.customoregen.generator;
 
-import com.gmail.andrewandy.customoregen.generator.builtins.GenerationChanceWrapper;
+import com.gmail.andrewandy.customoregen.generator.builtins.GenerationChanceHelper;
 import com.gmail.andrewandy.customoregen.util.ItemWrapper;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -10,8 +10,8 @@ import java.util.*;
 
 public abstract class ChanceGenerator extends AbstractGenerator {
 
-    private GenerationChanceWrapper spawnChances; //TODO remove this
-    private List<GenerationChanceWrapper> levelChance;
+    private GenerationChanceHelper spawnChances; //TODO remove this
+    private List<GenerationChanceHelper> levelChance;
 
     protected ChanceGenerator(int maxLevel, int level) {
         this(maxLevel, level, Priority.NORMAL);
@@ -58,11 +58,11 @@ public abstract class ChanceGenerator extends AbstractGenerator {
     @Override
     public void save() {
         super.save();
-        spawnChances = spawnChances == null ? new GenerationChanceWrapper() : spawnChances;
+        spawnChances = spawnChances == null ? new GenerationChanceHelper() : spawnChances;
         ConfigurationSection section = getDataSection().createSection("Levels");
         for (int index = 0; index < maxLevel(); index++) {
             ConfigurationSection levelSection = section.createSection(Integer.toString(index));
-            GenerationChanceWrapper chances = levelChance.get(index);
+            GenerationChanceHelper chances = levelChance.get(index);
             levelSection.set("Data", chances == null ? null : chances.serialise());
         }
     }
@@ -71,43 +71,43 @@ public abstract class ChanceGenerator extends AbstractGenerator {
     public void writeToMeta(ItemMeta original) {
         super.writeToMeta(original);
         ItemWrapper wrapper = ItemWrapper.wrap(original);
-        this.spawnChances = this.spawnChances == null ? new GenerationChanceWrapper() : this.spawnChances;
+        this.spawnChances = this.spawnChances == null ? new GenerationChanceHelper() : this.spawnChances;
         for (int index = 0; index < maxLevel(); index++) {
-            GenerationChanceWrapper chances = levelChance.get(index);
+            GenerationChanceHelper chances = levelChance.get(index);
             wrapper.setString("SpawnChanceWrapper:" + index, chances.serialise());
         }
     }
 
-    public GenerationChanceWrapper getSpawnChances() {
+    public GenerationChanceHelper getSpawnChances() {
         return getSpawnChances(getLevel());
     }
 
-    public GenerationChanceWrapper getSpawnChances(int level) {
+    public GenerationChanceHelper getSpawnChances(int level) {
         return levelChance.get(level - 1);
     }
 
-    public List<GenerationChanceWrapper> getAllSpawnChances() {
+    public List<GenerationChanceHelper> getAllSpawnChances() {
         return new ArrayList<>(levelChance);
     }
 
     private void fillSpawnChances(boolean overwrite) {
         for (int index = 0; index < maxLevel(); index++) {
             if (levelChance.size() == index) {
-                levelChance.add(index, new GenerationChanceWrapper());
+                levelChance.add(index, new GenerationChanceHelper());
                 continue;
             }
             if (levelChance.get(index) != null) {
                 if (!overwrite) {
                     continue;
                 }
-                levelChance.add(index, new GenerationChanceWrapper());
+                levelChance.add(index, new GenerationChanceHelper());
             } else {
-                levelChance.set(index, new GenerationChanceWrapper());
+                levelChance.set(index, new GenerationChanceHelper());
             }
         }
     }
 
     private void setSpawnChance(int level, String serial) {
-        levelChance.set(level, new GenerationChanceWrapper(serial));
+        levelChance.set(level, new GenerationChanceHelper(serial));
     }
 }

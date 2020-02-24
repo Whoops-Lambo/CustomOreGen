@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class GenerationChanceWrapper {
+public class GenerationChanceHelper {
 
     private static final Type blockStateChanceType = new TypeToken<Map<String, Integer>>() {
     }.getType();
@@ -20,10 +20,10 @@ public class GenerationChanceWrapper {
     private Map<int[], String> chanceMap = new HashMap<>();
     private int denominator = 0;
 
-    public GenerationChanceWrapper() {
+    public GenerationChanceHelper() {
     }
 
-    public GenerationChanceWrapper(String serial) {
+    public GenerationChanceHelper(String serial) {
         blockStateChances = new GsonBuilder().create().fromJson(serial, blockStateChanceType);
         recalculateChances();
     }
@@ -52,11 +52,11 @@ public class GenerationChanceWrapper {
      * @param chance The relative chance for the block to be added. See the settings.yml for
      *               an example of this works.
      */
-    public GenerationChanceWrapper addBlockChance(BlockData block, int chance) {
-       return addBlockChance(Objects.requireNonNull(block).getAsString(), chance);
+    public GenerationChanceHelper addBlockChance(BlockData block, int chance) {
+        return addBlockChance(Objects.requireNonNull(block).getAsString(), chance);
     }
 
-    public GenerationChanceWrapper addBlockChance(String blockData, int chance) {
+    public GenerationChanceHelper addBlockChance(String blockData, int chance) {
         if (blockStateChances.containsKey(Objects.requireNonNull(blockData))) {
             blockStateChances.replace(blockData, chance);
         } else {
@@ -66,11 +66,11 @@ public class GenerationChanceWrapper {
         return this;
     }
 
-    public GenerationChanceWrapper removeBlockChance(BlockData block) {
+    public GenerationChanceHelper removeBlockChance(BlockData block) {
         return removeBlockChance(Objects.requireNonNull(block));
     }
 
-    public GenerationChanceWrapper removeBlockChance(String block) {
+    public GenerationChanceHelper removeBlockChance(String block) {
         blockStateChances.remove(block);
         chanceMap.values().remove(block);
         recalculateChances();
@@ -101,7 +101,7 @@ public class GenerationChanceWrapper {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GenerationChanceWrapper that = (GenerationChanceWrapper) o;
+        GenerationChanceHelper that = (GenerationChanceHelper) o;
         return denominator == that.denominator &&
                 Objects.equals(blockStateChances, that.blockStateChances) &&
                 Objects.equals(chanceMap, that.chanceMap);

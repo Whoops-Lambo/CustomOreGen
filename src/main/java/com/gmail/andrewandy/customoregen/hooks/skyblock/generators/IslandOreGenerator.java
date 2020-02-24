@@ -1,15 +1,22 @@
 package com.gmail.andrewandy.customoregen.hooks.skyblock.generators;
 
+import com.gmail.andrewandy.corelib.util.Common;
 import com.gmail.andrewandy.customoregen.generator.Priority;
-import com.gmail.andrewandy.customoregen.generator.builtins.GenerationChanceWrapper;
+import com.gmail.andrewandy.customoregen.generator.builtins.GenerationChanceHelper;
+import com.gmail.andrewandy.customoregen.hooks.economy.VaultHook;
 import com.gmail.andrewandy.customoregen.util.ItemWrapper;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import world.bentobox.bentobox.database.objects.Island;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -18,14 +25,18 @@ import java.util.UUID;
  */
 public class IslandOreGenerator extends IslandRegionGenerator {
 
-    private GenerationChanceWrapper spawnChances;
-
+    private static final String GEN_CHANCE_HELPER_KEY = "GenerationChances";
+    private final double[] levelUpCost;
+    private List<GenerationChanceHelper> spawnChances;
 
     public IslandOreGenerator(UUID generatorID) {
         super(generatorID);
         validateHook();
-        String jsonMapped = getDataSection().getString("SpawnChanceWrapper");
-        setSpawnChances(jsonMapped);
+        for (int level = 0; level < maxLevel(); level++) {
+            String jsonMapped = getDataSection().getString(GEN_CHANCE_HELPER_KEY + ":" + level);
+            setSpawnChances(jsonMapped, level);
+        }
+        levelUpCost = new double[maxLevel()];
     }
 
     public IslandOreGenerator(ItemStack itemStack) {
@@ -36,32 +47,82 @@ public class IslandOreGenerator extends IslandRegionGenerator {
         super(meta);
         validateHook();
         ItemWrapper wrapper = ItemWrapper.wrap(meta);
-        String jsonMapped = wrapper.getString("SpawnChanceWrapper");
-        setSpawnChances(jsonMapped);
+        for (int level = 0; level < maxLevel(); level++) {
+            String jsonMapped = wrapper.getString(GEN_CHANCE_HELPER_KEY + ":" + level);
+            setSpawnChances(jsonMapped, level);
+        }
+        levelUpCost = new double[maxLevel()];
     }
 
     public IslandOreGenerator(Island island, int maxLevel, int level) {
         super(island, maxLevel, level);
         validateHook();
+        levelUpCost = new double[maxLevel()];
     }
 
     public IslandOreGenerator(Island island, int maxLevel, int level, Priority priority) {
         super(island, maxLevel, level, priority);
         validateHook();
+        levelUpCost = new double[maxLevel()];
     }
 
     public IslandOreGenerator(String islandID, int maxLevel, int level) {
         super(islandID, maxLevel, level);
         validateHook();
+        levelUpCost = new double[maxLevel()];
     }
 
     public IslandOreGenerator(String islandID, int maxLevel, int level, Priority priority) {
         super(islandID, maxLevel, level, priority);
         validateHook();
+        levelUpCost = new double[maxLevel()];
     }
 
-    private void setSpawnChances(String serial) {
-        spawnChances = new GenerationChanceWrapper(serial);
+    public void setLevelUpCost(int level, double cost) {
+        if (cost < 0) {
+            throw new IllegalArgumentException("Cost must be greater than 1");
+        }
+        if (level < 1 || level > maxLevel()) {
+            throw new IllegalArgumentException("Invalid level!");
+        }
+        this.levelUpCost[level] = cost;
+    }
+
+    public void upgrade(UUID upgrader, String succeedMessage, String failMessage) {
+        boolean success = true;
+        if (upgrader != null) {
+            Economy economy = VaultHook.getEconomy();
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(upgrader);
+            CommandSender player = offlinePlayer.getPlayer();
+            double balance = economy.getBalance(offlinePlayer);
+            success = balance > levelUpCost[getLevel()] && economy.withdrawPlayer(offlinePlayer, levelUpCost[getLevel()]).transactionSuccess();
+            String message = success ? succeedMessage : failMessage;
+            if (player != null && message != null) {
+                Common.tell(player, message);
+            }
+        }
+        if (success) {
+            incrementLevel();
+        }
+    }
+
+    private void setSpawnChances(String serial, int level) {
+        if (level < 1 || level > maxLevel()) {
+            throw new IllegalArgumentException("Invalid level!");
+        }
+        spawnChances.set(level, new GenerationChanceHelper(serial));
+    }
+
+    public List<GenerationChanceHelper> getAllSpawnChances() {
+        return spawnChances;
+    }
+
+    public GenerationChanceHelper getSpawnChances(int level) {
+        return spawnChances.get(level);
+    }
+
+    public GenerationChanceHelper getSpawnChances() {
+        return getSpawnChances(getLevel());
     }
 
     @Override
@@ -69,7 +130,7 @@ public class IslandOreGenerator extends IslandRegionGenerator {
         if (!isActiveAtLocation(location) || spawnChances == null) {
             return null;
         }
-        return spawnChances.getRandomBlock();
+        return getSpawnChances().getRandomBlock();
     }
 
     @Override
@@ -88,9 +149,10 @@ public class IslandOreGenerator extends IslandRegionGenerator {
     @Override
     public void save() {
         super.save();
-        spawnChances = spawnChances == null ? new GenerationChanceWrapper() : spawnChances;
-        ConfigurationSection section = getDataSection();
-        section.set("SpawnChanceWrapper", spawnChances.serialise());
+        ConfigurationSection section = getDataSection().createSection(GEN_CHANCE_HELPER_KEY);
+        for (int level = 1; level < maxLevel(); level++) {
+            section.set(Integer.toString(level), getSpawnChances(level).serialise());
+        }
     }
 
     @Override
@@ -98,8 +160,9 @@ public class IslandOreGenerator extends IslandRegionGenerator {
         //Mutates the original meta.
         super.writeToMeta(original);
         ItemWrapper wrapper = ItemWrapper.wrap(original);
-        this.spawnChances = this.spawnChances == null ? new GenerationChanceWrapper() : this.spawnChances;
-        wrapper.setString("SpawnChanceWrapper", this.spawnChances.serialise());
+        for (int level = 1; level < maxLevel(); level++) {
+            wrapper.setString(GEN_CHANCE_HELPER_KEY + ":" + level, getSpawnChances(level).serialise());
+        }
     }
 
     @Override

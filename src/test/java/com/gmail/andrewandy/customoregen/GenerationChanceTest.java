@@ -1,6 +1,6 @@
 package com.gmail.andrewandy.customoregen;
 
-import com.gmail.andrewandy.customoregen.generator.builtins.GenerationChanceWrapper;
+import com.gmail.andrewandy.customoregen.generator.builtins.GenerationChanceHelper;
 import org.bukkit.Material;
 import org.junit.Assert;
 import org.junit.Test;
@@ -9,7 +9,7 @@ public class GenerationChanceTest {
 
     @Test
     public void testMath() {
-        GenerationChanceWrapper wrapper = new GenerationChanceWrapper();
+        GenerationChanceHelper wrapper = new GenerationChanceHelper();
         int denominator = 0;
         int numerator = 20;
         Material[] materials = new Material[]{Material.COBBLESTONE, Material.DIAMOND_ORE, Material.END_STONE_BRICKS};

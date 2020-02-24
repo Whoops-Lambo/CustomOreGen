@@ -1,0 +1,174 @@
+package com.gmail.andrewandy.customoregen.util;
+
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class DataContainer implements ConfigurationSerializable, Cloneable {
+
+    private static final Collection<Class<?>> supportedClasses;
+
+    static {
+        supportedClasses = Arrays.asList(
+                int.class,
+                double.class,
+                float.class,
+                long.class,
+                short.class,
+                byte.class,
+                String.class);
+    }
+
+    private Map<String, Object> container = new ConcurrentHashMap<>();
+
+    public DataContainer(Map<String, Object> serial) {
+        this.container = new HashMap<>(serial);
+    }
+
+    public DataContainer() {
+
+    }
+
+
+    public static boolean isSupported(Class<?> clazz) {
+        if (clazz.isArray()) {
+            clazz = clazz.getComponentType();
+        }
+        for (Class<?> supported : supportedClasses) {
+            if (clazz.isAssignableFrom(supported) || clazz.equals(supported)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void set(String key, Object... objects) throws UnsupportedOperationException {
+        if (isSupported(objects.getClass())) {
+            throw new UnsupportedOperationException();
+        }
+        container.remove(key);
+        container.put(key, objects);
+    }
+
+    public boolean containsKey(String key) {
+        return container.containsKey(key);
+    }
+
+    public <T> boolean containsKeyWithType(String key, Class<T> targetType) {
+        return get(key, targetType).isPresent();
+    }
+
+    public <T> Optional<T> get(String key, Class<T> targetType) {
+        Object obj = container.get(Objects.requireNonNull(key));
+        if (!targetType.isInstance(obj)) {
+            return Optional.empty();
+        }
+        return Optional.of(targetType.cast(obj));
+    }
+
+    public Optional<Double> getDouble(String key) {
+        return get(key, double.class);
+    }
+
+    public Optional<double[]> getDoubleArray(String key) {
+        return get(key, double[].class);
+    }
+
+    public Optional<Integer> getInt(String key) {
+        return get(key, int.class);
+    }
+
+
+    public Optional<int[]> getIntArray(String key) {
+        return get(key, int[].class);
+    }
+
+    public Optional<Float> getFloat(String key) {
+        return get(key, float.class);
+    }
+
+    public Optional<float[]> getFloatArray(String key) {
+        return get(key, float[].class);
+    }
+
+    public Optional<Long> getLong(String key) {
+        return get(key, long.class);
+    }
+
+    public Optional<Byte> getByte(String key) {
+        return get(key, byte.class);
+    }
+
+    public Optional<byte[]> getByteArray(String key) {
+        return get(key, byte[].class);
+    }
+
+    public Optional<Short> getShort(String key) {
+        return get(key, short.class);
+    }
+
+    public Optional<short[]> getShortArray(String key) {
+        return get(key, short[].class);
+    }
+
+    public Optional<long[]> getLongArray(String key) {
+        return get(key, long[].class);
+    }
+
+    public Optional<String> getString(String key) {
+        return get(key, String.class);
+    }
+
+    public Optional<String[]> getStringArray(String key) {
+        return get(key, String[].class);
+    }
+
+    public String[] getStringArray(String key, boolean nullable) {
+        if (container.containsKey(key) && nullable) {
+            return (String[]) container.get(key);
+        }
+        return null;
+    }
+
+    public String getString(String key, boolean nullable) {
+        if (container.containsKey(key) && nullable) {
+            return (String) container.get(key);
+        }
+        return null;
+    }
+
+    public Collection<Object> getValues() {
+        return new ArrayList<>(container.values());
+    }
+
+    public <T> Collection<T> getAllValuesOfType(Class<T> targetType) {
+        Collection<Object> raw = getValues();
+        Objects.requireNonNull(targetType);
+        Collection<T> ret = new HashSet<>();
+        raw.forEach(obj -> {
+            if (targetType.isInstance(obj)) {
+                ret.add(targetType.cast(obj));
+            }
+        });
+        return ret;
+    }
+
+
+    @Override
+    public Map<String, Object> serialize() {
+        return container;
+    }
+
+    @Override
+    public DataContainer clone() {
+        try {
+            super.clone();
+        } catch (CloneNotSupportedException ex) {
+            ex.printStackTrace();
+        }
+        DataContainer ret = new DataContainer();
+        ret.container = new HashMap<>(container);
+        return ret;
+    }
+}

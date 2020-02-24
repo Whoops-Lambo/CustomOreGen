@@ -5,6 +5,8 @@ version: ${project.version}
 api-version: 1.15
 prefix: ""
 load: STARTUP
+depend:
+  - Vault
 softdepend:
   - BentoBox
 commands:

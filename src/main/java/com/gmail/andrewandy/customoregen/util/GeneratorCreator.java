@@ -3,7 +3,7 @@ package com.gmail.andrewandy.customoregen.util;
 import com.gmail.andrewandy.customoregen.generator.BlockGenerator;
 import com.gmail.andrewandy.customoregen.generator.HoldableGenerator;
 import com.gmail.andrewandy.customoregen.generator.Priority;
-import com.gmail.andrewandy.customoregen.generator.builtins.GenerationChanceWrapper;
+import com.gmail.andrewandy.customoregen.generator.builtins.GenerationChanceHelper;
 import org.bukkit.Location;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -25,7 +25,7 @@ public class GeneratorCreator implements ConfigurationSerializable {
     private int level, maxLevel;
     private boolean isGlobal;
     private boolean isStackable;
-    private GenerationChanceWrapper chances;
+    private GenerationChanceHelper chances;
 
     private GeneratorCreator() {
     }
@@ -41,13 +41,13 @@ public class GeneratorCreator implements ConfigurationSerializable {
     public static GeneratorCreator deserialise(Map<String, Object> serial) {
         int level, maxLevel;
         boolean global, stackable;
-        GenerationChanceWrapper chanceWrapper;
+        GenerationChanceHelper chanceWrapper;
         //Setup the variables
         level = (int) serial.get("level");
         maxLevel = (int) serial.get("maxLevel");
         global = (boolean) serial.get("global");
         stackable = (boolean) serial.get("stackable");
-        chanceWrapper = new GenerationChanceWrapper((String) serial.get("generationChances"));
+        chanceWrapper = new GenerationChanceHelper((String) serial.get("generationChances"));
         //Set the state from a null creator.
         GeneratorCreator creator = nullCreator();
         creator.chances = chanceWrapper;

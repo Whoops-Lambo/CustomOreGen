@@ -10,7 +10,7 @@ import java.util.*;
 
 public abstract class ChanceGenerator extends AbstractGenerator {
 
-    private GenerationChanceHelper spawnChances; //TODO remove this
+    public static final String GEN_CHANCE_HELPER_KEY = "GenerationChances";
     private List<GenerationChanceHelper> levelChance;
 
     protected ChanceGenerator(int maxLevel, int level) {
@@ -32,8 +32,8 @@ public abstract class ChanceGenerator extends AbstractGenerator {
         setupSpawnChances();
         ItemWrapper wrapper = ItemWrapper.wrap(meta);
         for (int index = 0; index < maxLevel(); index++) {
-            String jsonMapped = wrapper.getString("SpawnChanceWrapper:" + index);
-            setSpawnChance(index, jsonMapped);
+            String jsonMapped = wrapper.getString(GEN_CHANCE_HELPER_KEY + ":" + index);
+            setSpawnChances(index, jsonMapped);
         }
     }
 
@@ -46,8 +46,8 @@ public abstract class ChanceGenerator extends AbstractGenerator {
             return;
         }
         for (int index = 0; index < maxLevel(); index++) {
-            String jsonMapped = section.getString(Integer.toString(index));
-            setSpawnChance(index, jsonMapped);
+            String jsonMapped = section.getString(GEN_CHANCE_HELPER_KEY + ":" + index);
+            setSpawnChances(index, jsonMapped);
         }
     }
 
@@ -58,12 +58,9 @@ public abstract class ChanceGenerator extends AbstractGenerator {
     @Override
     public void save() {
         super.save();
-        spawnChances = spawnChances == null ? new GenerationChanceHelper() : spawnChances;
         ConfigurationSection section = getDataSection().createSection("Levels");
         for (int index = 0; index < maxLevel(); index++) {
-            ConfigurationSection levelSection = section.createSection(Integer.toString(index));
-            GenerationChanceHelper chances = levelChance.get(index);
-            levelSection.set("Data", chances == null ? null : chances.serialise());
+            section.set(GEN_CHANCE_HELPER_KEY + ":" + index, levelChance.get(index).serialise());
         }
     }
 
@@ -71,10 +68,9 @@ public abstract class ChanceGenerator extends AbstractGenerator {
     public void writeToMeta(ItemMeta original) {
         super.writeToMeta(original);
         ItemWrapper wrapper = ItemWrapper.wrap(original);
-        this.spawnChances = this.spawnChances == null ? new GenerationChanceHelper() : this.spawnChances;
         for (int index = 0; index < maxLevel(); index++) {
             GenerationChanceHelper chances = levelChance.get(index);
-            wrapper.setString("SpawnChanceWrapper:" + index, chances.serialise());
+            wrapper.setString(GEN_CHANCE_HELPER_KEY + ":" + index, chances.serialise());
         }
     }
 
@@ -107,7 +103,7 @@ public abstract class ChanceGenerator extends AbstractGenerator {
         }
     }
 
-    private void setSpawnChance(int level, String serial) {
+    private void setSpawnChances(int level, String serial) {
         levelChance.set(level, new GenerationChanceHelper(serial));
     }
 }

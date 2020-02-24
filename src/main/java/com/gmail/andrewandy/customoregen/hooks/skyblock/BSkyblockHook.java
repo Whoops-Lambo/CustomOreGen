@@ -74,8 +74,8 @@ public final class BSkyblockHook extends BentoBoxHook {
         ConfigurationSection section = CustomOreGen.getDefaults().getConfigurationSection("IslandSettings");
         assert section != null;
         Priority priority;
-        OverworldGenerator instance = OverworldGenerator.getInstance();
-        priority = instance == null ? Priority.NORMAL : instance.getPriority().getNext();
+        OverworldGenerator currentInstance = OverworldGenerator.getInstance();
+        priority = currentInstance == null ? Priority.NORMAL : currentInstance.getPriority().getNext();
         int maxLevel = section.getInt("MaxLevel");
         int currentLevel = section.getInt("CurrentLevel");
         IslandOreGenerator islandGenerator = new IslandOreGenerator("null", maxLevel, currentLevel, priority);

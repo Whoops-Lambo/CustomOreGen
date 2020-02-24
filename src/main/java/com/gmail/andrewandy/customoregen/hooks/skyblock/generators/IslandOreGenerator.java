@@ -5,6 +5,7 @@ import com.gmail.andrewandy.customoregen.generator.Priority;
 import com.gmail.andrewandy.customoregen.generator.builtins.GenerationChanceHelper;
 import com.gmail.andrewandy.customoregen.hooks.economy.VaultHook;
 import com.gmail.andrewandy.customoregen.util.ItemWrapper;
+import static com.gmail.andrewandy.customoregen.generator.ChanceGenerator.GEN_CHANCE_HELPER_KEY;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,7 +26,6 @@ import java.util.UUID;
  */
 public class IslandOreGenerator extends IslandRegionGenerator {
 
-    private static final String GEN_CHANCE_HELPER_KEY = "GenerationChances";
     private final double[] levelUpCost;
     private List<GenerationChanceHelper> spawnChances;
 
@@ -52,30 +52,52 @@ public class IslandOreGenerator extends IslandRegionGenerator {
             setSpawnChances(jsonMapped, level);
         }
         levelUpCost = new double[maxLevel()];
+        fillSpawnChances(false);
     }
 
     public IslandOreGenerator(Island island, int maxLevel, int level) {
         super(island, maxLevel, level);
         validateHook();
         levelUpCost = new double[maxLevel()];
+        fillSpawnChances(false);
     }
 
     public IslandOreGenerator(Island island, int maxLevel, int level, Priority priority) {
         super(island, maxLevel, level, priority);
         validateHook();
         levelUpCost = new double[maxLevel()];
+        fillSpawnChances(false);
     }
 
     public IslandOreGenerator(String islandID, int maxLevel, int level) {
         super(islandID, maxLevel, level);
         validateHook();
         levelUpCost = new double[maxLevel()];
+        fillSpawnChances(false);
     }
 
     public IslandOreGenerator(String islandID, int maxLevel, int level, Priority priority) {
         super(islandID, maxLevel, level, priority);
         validateHook();
         levelUpCost = new double[maxLevel()];
+        fillSpawnChances(false);
+    }
+
+    private void fillSpawnChances(boolean overwrite) {
+        for (int index = 0; index < maxLevel(); index++) {
+            if (spawnChances.size() == index) {
+                spawnChances.add(index, new GenerationChanceHelper());
+                continue;
+            }
+            if (spawnChances.get(index) != null) {
+                if (!overwrite) {
+                    continue;
+                }
+                spawnChances.add(index, new GenerationChanceHelper());
+            } else {
+                spawnChances.set(index, new GenerationChanceHelper());
+            }
+        }
     }
 
     public void setLevelUpCost(int level, double cost) {

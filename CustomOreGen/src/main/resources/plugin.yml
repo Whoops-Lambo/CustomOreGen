@@ -1,0 +1,26 @@
+main: com.gmail.andrewandy.com.gmail.andrewandy.customoregen.CustomOreGen
+name: "CustomOreGen"
+author: andrewandy
+version: ${project.version}
+api-version: 1.15
+prefix: ""
+load: STARTUP
+depend:
+  - Vault
+softdepend:
+  - BentoBox
+commands:
+  CustomOreGen:
+    aliases: cog
+    usage: /com.gmail.andrewandy.customoregen [subcommand]
+    description: base command for CustomOreGen
+permissions:
+  customoregen:
+    description: base permission for CustomOreGen.
+    children:
+      reload:
+        default: false
+        description: allows the user to reload the generators.
+      save:
+        default: false
+        description: allows the user to save all the generators now.

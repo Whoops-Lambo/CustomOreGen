@@ -1,0 +1,58 @@
+#Priority list: LOWEST, LOW, NORMAL, HIGH, HIGHEST
+#Priorities represent whether the priority at which generators have over the final generated block
+#Default settings for all islands.
+OverworldSettings:
+  MaxLevel: 1
+  CurrentLevel: 1
+  Levels:
+    1:
+      DIAMOND_ORE: 5
+      EMERALD_ORE: 5
+      LAPIS_ORE: 10
+      REDSTONE_ORE: 10
+      GOLD_ORE: 10
+      IRON_ORE: 15
+      COAL_ORE: 20
+      COBBLESTONE: 25
+#The priority cannot be manually set for the island generator. It will always be one higher than that of the overworld generator.
+IslandSettings:
+  #Create a new section for each template name (such as "Original") or "TwinIslands", 'DEFAULT' is reserved
+  #for any other template which is found.
+  DEFAULT:
+    MaxLevel: 3
+    DefaultLevel: 1
+    Levels:
+      #Chances are relative, i.e DIAMOND_ORE Has a chance of 5/(5+5+10+10+15+20+100)% which is 1/33 chance of spawning
+      #Chances must be positive integers.
+      1:
+        Cost: 1000
+        DIAMOND_ORE: 5
+        EMERALD_ORE: 5
+        LAPIS_ORE: 10
+        REDSTONE_ORE: 10
+        GOLD_ORE: 10
+        IRON_ORE: 15
+        COAL_ORE: 20
+        COBBLESTONE: 100
+      2:
+        Cost: 2000
+        EMERALD_ORE: 5
+        DIAMOND_ORE: 8
+        REDSTONE_ORE: 15
+        IRON_ORE: 15
+        GOLD_ORE: 13
+        LAPIS_ORE: 10
+        SMOOTH_STONE: 25
+        COBBLESTONE: 75
+      3:
+        Cost: 2000
+        EMERALD_ORE: 8
+        DIAMOND_ORE: 6
+        DIAMOND_BLOCK: 1
+        IRON_BLOCK: 2
+        GOLD_ORE: 12
+        GOLD_BLOCK: 2
+        COAL_BLOCK: 5
+        COAL_ORE: 15
+        SMOOTH_STONE: 50
+        COBBLESTONE: 50

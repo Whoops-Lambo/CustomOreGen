@@ -1,13 +1,14 @@
-package com.gmail.andrewandy.customoregen.hooks.skyblock;
+package com.gmail.andrewandy.customoregen.hooks.bentobox.skyblock;
 
 import com.gmail.andrewandy.corelib.util.Common;
 import com.gmail.andrewandy.customoregen.CustomOreGen;
 import com.gmail.andrewandy.customoregen.generator.Priority;
 import com.gmail.andrewandy.customoregen.generator.builtins.GenerationChanceHelper;
 import com.gmail.andrewandy.customoregen.generator.builtins.OverworldGenerator;
-import com.gmail.andrewandy.customoregen.hooks.BentoBoxHook;
-import com.gmail.andrewandy.customoregen.hooks.skyblock.generators.IslandOreGenerator;
-import com.gmail.andrewandy.customoregen.hooks.skyblock.leveling.IslandLevelingManager;
+import com.gmail.andrewandy.customoregen.hooks.bentobox.BentoBoxHook;
+import com.gmail.andrewandy.customoregen.hooks.bentobox.CustomOreGenAddon;
+import com.gmail.andrewandy.customoregen.hooks.bentobox.skyblock.generators.IslandOreGenerator;
+import com.gmail.andrewandy.customoregen.hooks.bentobox.skyblock.leveling.IslandLevelingManager;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -20,29 +21,29 @@ import java.util.logging.Level;
 /**
  * Hooks into BSkyblock and enables
  */
-public final class BSkyblockHook extends BentoBoxHook {
+public final class SkyblockHook extends BentoBoxHook {
 
     public static IslandOreGenerator defaultGenerator;
-    private static BSkyblockHook instance;
+    private static SkyblockHook instance;
 
 
-    private BSkyblockHook() {
-        super("BSkyblock");
-        if (super.getAddon() == null) {
-            Common.log(Level.INFO, "&a[Hooks] &eBSkyblock was not found.");
+    private SkyblockHook() {
+        super("BSkyblock", "CaveBlock", "AcidIsland", "SkyGrid");
+        if (super.getAddons() == null) {
+            Common.log(Level.INFO, "&a[Hooks] &eNo Skyblock addon was not found.");
             return;
         }
 
         ConfigurationSerialization.registerClass(IslandTracker.class);
         loadIslandLevellingManager();
         loadDefaultGenerator();
-        Common.log(Level.INFO, "&a[Hooks] &bHooked into BSkyblock!");
+        Common.log(Level.INFO, "&a[Hooks] &bSkyblock featured enabled!");
         instance = this;
     }
 
-    public static BSkyblockHook getInstance() {
+    public static SkyblockHook getInstance() {
         if (instance == null) {
-            new BSkyblockHook();
+            new SkyblockHook();
         }
         return instance;
     }
@@ -56,7 +57,7 @@ public final class BSkyblockHook extends BentoBoxHook {
     }
 
     private void loadIslandLevellingManager() {
-        File file = getAddon().getDataFolder().getAbsoluteFile();
+        File file = CustomOreGenAddon.getInstance().getDataFolder().getAbsoluteFile();
         File data = new File(file.getAbsolutePath(), "IslandLevelData.yml");
         try {
             if (!data.isFile()) {

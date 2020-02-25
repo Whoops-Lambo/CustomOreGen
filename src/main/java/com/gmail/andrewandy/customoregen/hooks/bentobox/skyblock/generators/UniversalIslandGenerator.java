@@ -1,4 +1,4 @@
-package com.gmail.andrewandy.customoregen.hooks.skyblock.generators;
+package com.gmail.andrewandy.customoregen.hooks.bentobox.skyblock.generators;
 
 import com.gmail.andrewandy.corelib.util.Common;
 import com.gmail.andrewandy.customoregen.CustomOreGen;

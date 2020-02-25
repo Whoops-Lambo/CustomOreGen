@@ -1,4 +1,4 @@
-main: com.gmail.andrewandy.SkyblockSpawners
-name: SkyblockSpawners
+main: com.gmail.andrewandyv
+name: CustomOreGen
 version: ${project.version}
 authors: [andrewandy]

@@ -7,7 +7,6 @@ import com.gmail.andrewandy.customoregen.generator.Priority;
 import com.gmail.andrewandy.customoregen.generator.builtins.GenerationChanceHelper;
 import com.gmail.andrewandy.customoregen.generator.builtins.OverworldGenerator;
 import com.gmail.andrewandy.customoregen.hooks.economy.VaultHook;
-import com.gmail.andrewandy.customoregen.hooks.skyblock.BSkyblockHook;
 import com.gmail.andrewandy.customoregen.listener.CobbleGeneratorHandler;
 import com.gmail.andrewandy.customoregen.util.DataContainer;
 import com.gmail.andrewandy.customoregen.util.FileUtil;
@@ -134,7 +133,6 @@ public class CustomOreGen extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
-        BSkyblockHook.getInstance();
     }
 
     private void loadUtils() {

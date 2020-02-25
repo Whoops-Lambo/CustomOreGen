@@ -1,8 +1,8 @@
-package com.gmail.andrewandy.customoregen.hooks.skyblock.generators;
+package com.gmail.andrewandy.customoregen.hooks.bentobox.skyblock.generators;
 
 import com.gmail.andrewandy.customoregen.generator.AbstractGenerator;
 import com.gmail.andrewandy.customoregen.generator.Priority;
-import com.gmail.andrewandy.customoregen.hooks.skyblock.BSkyblockHook;
+import com.gmail.andrewandy.customoregen.hooks.bentobox.skyblock.SkyblockHook;
 import com.gmail.andrewandy.customoregen.util.ItemWrapper;
 import com.gmail.andrewandy.customoregen.util.Region;
 import org.bukkit.Location;
@@ -59,9 +59,13 @@ public abstract class IslandRegionGenerator extends AbstractGenerator {
     }
 
     public static void validateHook() throws IllegalStateException {
-        if (BSkyblockHook.getInstance() == null) {
+        if (SkyblockHook.getInstance() == null) {
             throw new IllegalStateException("Skyblock is not enabled!");
         }
+    }
+
+    public String getIslandID() {
+        return islandID;
     }
 
     public boolean withinRegion(Location location) {

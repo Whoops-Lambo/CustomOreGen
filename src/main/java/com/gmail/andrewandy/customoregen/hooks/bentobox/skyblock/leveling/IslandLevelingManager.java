@@ -1,6 +1,6 @@
-package com.gmail.andrewandy.customoregen.hooks.skyblock.leveling;
+package com.gmail.andrewandy.customoregen.hooks.bentobox.skyblock.leveling;
 
-import com.gmail.andrewandy.customoregen.hooks.skyblock.IslandTracker;
+import com.gmail.andrewandy.customoregen.hooks.bentobox.skyblock.IslandTracker;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import world.bentobox.bentobox.database.objects.Island;
@@ -76,7 +76,7 @@ public class IslandLevelingManager {
      * Set the max level of the generator of this island.
      *
      * @param islandID {@link Island#getUniqueId()}
-     * @param maxLevel The new max level of the {@link com.gmail.andrewandy.customoregen.hooks.skyblock.generators.IslandOreGenerator} of this island.
+     * @param maxLevel The new max level of the {@link com.gmail.andrewandy.customoregen.hooks.bentobox.skyblock.generators.IslandOreGenerator} of this island.
      */
     public void setMaxGeneratorLevel(String islandID, int maxLevel) {
 

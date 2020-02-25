@@ -1,8 +1,8 @@
-package com.gmail.andrewandy.customoregen.hooks.skyblock;
+package com.gmail.andrewandy.customoregen.hooks.bentobox.skyblock;
 
 import com.gmail.andrewandy.corelib.util.Common;
 import com.gmail.andrewandy.customoregen.generator.AbstractGenerator;
-import com.gmail.andrewandy.customoregen.hooks.skyblock.generators.IslandOreGenerator;
+import com.gmail.andrewandy.customoregen.hooks.bentobox.skyblock.generators.IslandOreGenerator;
 import com.gmail.andrewandy.customoregen.util.DataContainer;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
@@ -15,7 +15,7 @@ import java.util.logging.Level;
 public class IslandTracker implements ConfigurationSerializable, Cloneable {
 
     static {
-        if (!BSkyblockHook.getInstance().isEnabled()) {
+        if (!SkyblockHook.getInstance().isEnabled()) {
             Common.log(Level.WARNING, "&eLoaded IslandTracker without BSkyblock enabled!");
         }
     }

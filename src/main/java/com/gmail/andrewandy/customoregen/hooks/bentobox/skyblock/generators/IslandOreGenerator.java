@@ -1,11 +1,10 @@
-package com.gmail.andrewandy.customoregen.hooks.skyblock.generators;
+package com.gmail.andrewandy.customoregen.hooks.bentobox.skyblock.generators;
 
 import com.gmail.andrewandy.corelib.util.Common;
 import com.gmail.andrewandy.customoregen.generator.Priority;
 import com.gmail.andrewandy.customoregen.generator.builtins.GenerationChanceHelper;
 import com.gmail.andrewandy.customoregen.hooks.economy.VaultHook;
 import com.gmail.andrewandy.customoregen.util.ItemWrapper;
-import static com.gmail.andrewandy.customoregen.generator.ChanceGenerator.GEN_CHANCE_HELPER_KEY;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,6 +19,8 @@ import world.bentobox.bentobox.database.objects.Island;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
+import static com.gmail.andrewandy.customoregen.generator.ChanceGenerator.GEN_CHANCE_HELPER_KEY;
 
 /**
  * Represents an ore generator which only works on a specific island.

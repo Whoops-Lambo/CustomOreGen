@@ -38,12 +38,14 @@
     </repositories>
 
     <dependencies>
+        <!-- Paper -->
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>1.15.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <!-- BentoBox Skyblock -->
         <dependency>
             <groupId>world.bentobox</groupId>
             <artifactId>bentobox</artifactId>
@@ -57,29 +59,40 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>world.bentobox</groupId>
+            <artifactId>level</artifactId>
+            <version>1.9.4-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Item NBT -->
+        <dependency>
             <groupId>de.tr7zw</groupId>
             <artifactId>item-nbt-api-plugin</artifactId>
             <version>2.1.0</version>
             <scope>compile</scope>
         </dependency>
+        <!-- Sqlite -->
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.28.0</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Vault -->
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>1.7</version>
             <scope>provided</scope>
         </dependency>
+        <!-- CoreLib -->
         <dependency>
             <groupId>com.gmail.andrewandy</groupId>
             <artifactId>CoreLib</artifactId>
             <version>2.4</version>
             <scope>compile</scope>
         </dependency>
+        <!-- Unit testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -92,6 +105,7 @@
             <version>3.2.4</version>
             <scope>test</scope>
         </dependency>
+        <!-- Mock Bukkit CUSTOM FORK -->
         <dependency>
             <groupId>com.github.seeseemelk</groupId>
             <artifactId>MockBukkit-v1.15</artifactId>

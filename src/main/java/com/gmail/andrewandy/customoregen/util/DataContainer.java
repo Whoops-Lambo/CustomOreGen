@@ -5,7 +5,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DataContainer implements ConfigurationSerializable, Cloneable {
+public class DataContainer implements ConfigurationSerializable {
 
     private static final Collection<Class<?>> supportedClasses;
 
@@ -28,6 +28,11 @@ public class DataContainer implements ConfigurationSerializable, Cloneable {
 
     public DataContainer() {
 
+    }
+
+    public DataContainer(DataContainer other) {
+        Objects.requireNonNull(other);
+        this.container = new ConcurrentHashMap<>(other.container);
     }
 
 
@@ -128,7 +133,7 @@ public class DataContainer implements ConfigurationSerializable, Cloneable {
         if (container.containsKey(key) && nullable) {
             return (String[]) container.get(key);
         }
-        return null;
+        return new String[0];
     }
 
     public String getString(String key, boolean nullable) {
@@ -160,15 +165,4 @@ public class DataContainer implements ConfigurationSerializable, Cloneable {
         return container;
     }
 
-    @Override
-    public DataContainer clone() {
-        try {
-            super.clone();
-        } catch (CloneNotSupportedException ex) {
-            ex.printStackTrace();
-        }
-        DataContainer ret = new DataContainer();
-        ret.container = new HashMap<>(container);
-        return ret;
-    }
 }

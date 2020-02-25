@@ -30,7 +30,7 @@ public class IslandTracker implements ConfigurationSerializable, Cloneable {
 
     public IslandTracker(String islandID, DataContainer data) {
         this.islandID = Objects.requireNonNull(islandID);
-        this.dataContainer = data.clone();
+        this.dataContainer = new DataContainer(data);
         this.dataContainer.set("Island", islandID);
     }
 

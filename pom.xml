@@ -84,6 +84,7 @@
             <groupId>com.github.seeseemelk</groupId>
             <artifactId>MockBukkit-v1.15</artifactId>
             <version>0.1-SNAPSHOT</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>

@@ -37,6 +37,7 @@ public class DataContainer implements ConfigurationSerializable {
 
 
     public static boolean isSupported(Class<?> clazz) {
+        //TODO fix type erasure issue
         if (clazz.isArray()) {
             clazz = clazz.getComponentType();
         }
@@ -49,7 +50,7 @@ public class DataContainer implements ConfigurationSerializable {
     }
 
     public void set(String key, Object... objects) throws UnsupportedOperationException {
-        if (isSupported(objects.getClass())) {
+        if (!isSupported(objects.getClass())) {
             throw new UnsupportedOperationException();
         }
         container.remove(key);

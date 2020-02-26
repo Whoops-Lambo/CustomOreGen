@@ -1,7 +1,6 @@
 package com.gmail.andrewandy.customoregen.addon.util;
 
 import com.gmail.andrewandy.corelib.util.Common;
-import com.gmail.andrewandy.customoregen.addon.CustomOreGenAddon;
 import com.gmail.andrewandy.customoregen.addon.generators.IslandOreGenerator;
 import com.gmail.andrewandy.customoregen.generator.AbstractGenerator;
 import com.gmail.andrewandy.customoregen.util.DataContainer;
@@ -17,11 +16,14 @@ public class IslandTracker implements ConfigurationSerializable, Cloneable {
 
     private static final String IDENTIFIER_KEY = "ISLAND_TRACKER_IDENTIFY";
 
+    /*
     static {
         if (CustomOreGenAddon.getInstance() == null) {
             Common.log(Level.WARNING, "&eLoaded IslandTracker without Skyblock enabled!");
         }
     }
+
+     */
 
     private final String islandID;
     private DataContainer dataContainer;
@@ -34,6 +36,8 @@ public class IslandTracker implements ConfigurationSerializable, Cloneable {
     public IslandTracker(String islandID, DataContainer data) {
         this.islandID = Objects.requireNonNull(islandID);
         this.dataContainer = new DataContainer(data);
+        String className = IslandTracker.class.getName();
+        this.dataContainer.set(IDENTIFIER_KEY, className);
         this.dataContainer.set("Island", islandID);
     }
 
@@ -96,7 +100,6 @@ public class IslandTracker implements ConfigurationSerializable, Cloneable {
 
     @Override
     public Map<String, Object> serialize() {
-        dataContainer.set(IDENTIFIER_KEY, IslandTracker.class.getName());
         return dataContainer.serialize();
     }
 
@@ -125,5 +128,20 @@ public class IslandTracker implements ConfigurationSerializable, Cloneable {
 
     public DataContainer getDataContainer() {
         return dataContainer;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        IslandTracker that = (IslandTracker) o;
+        return Objects.equals(islandID, that.islandID) &&
+                Objects.equals(dataContainer, that.dataContainer) &&
+                Objects.equals(generator, that.generator);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(islandID, dataContainer, generator);
     }
 }

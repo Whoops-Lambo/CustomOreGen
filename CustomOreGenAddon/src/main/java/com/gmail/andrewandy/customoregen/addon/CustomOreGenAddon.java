@@ -2,6 +2,7 @@ package com.gmail.andrewandy.customoregen.addon;
 
 import com.gmail.andrewandy.corelib.util.Common;
 import com.gmail.andrewandy.corelib.util.DeregisterableListener;
+import com.gmail.andrewandy.customoregen.CustomOreGen;
 import com.gmail.andrewandy.customoregen.addon.generators.IslandOreGenerator;
 import com.gmail.andrewandy.customoregen.addon.leveling.IslandLevelingManager;
 import com.gmail.andrewandy.customoregen.addon.levels.IslandTemplateMapper;
@@ -49,6 +50,10 @@ public final class CustomOreGenAddon extends Addon {
     private Collection<String> addonNames = Arrays.asList("BSkyblock", "AcidIsland", "CaveBlock");
 
     private CustomOreGenAddon() {
+        instance = this;
+    }
+
+    private CustomOreGenAddon(Object... unused) {
         Common.setPrefix("&3[CustomOreGen] &d[Addon] &b");
 
         Plugin plugin = Bukkit.getPluginManager().getPlugin("CustomOreGen");

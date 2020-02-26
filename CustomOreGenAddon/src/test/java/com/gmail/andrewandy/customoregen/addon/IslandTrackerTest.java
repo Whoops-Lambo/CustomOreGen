@@ -2,12 +2,15 @@ package com.gmail.andrewandy.customoregen.addon;
 
 import com.gmail.andrewandy.customoregen.addon.generators.IslandOreGenerator;
 import com.gmail.andrewandy.customoregen.addon.util.IslandTracker;
+import com.gmail.andrewandy.customoregen.generator.AbstractGenerator;
 import com.gmail.andrewandy.customoregen.util.DataContainer;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.jupiter.api.Order;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.UUID;
@@ -15,18 +18,27 @@ import java.util.UUID;
 public class IslandTrackerTest {
 
     static {
+        CustomOreGenAddon.class.getClassLoader();
         ConfigurationSerialization.registerClass(IslandTracker.class);
+        try {
+            AbstractGenerator.setDataFile(File.createTempFile("Temp", ".yml"));
+        } catch (IOException e) {
+            Assert.fail(e.getMessage());
+        }
     }
 
     private static final String islandID = UUID.randomUUID().toString();
     private static final IslandTracker islandTracker = new IslandTracker(islandID);
     private static final IslandOreGenerator generator = new IslandOreGenerator(islandID, 10, 5);
+
     @Test
     @Order(2)
     public void serialisationTest() {
         islandTracker.setGenerator(generator);
-        DataContainer container = islandTracker.getDataContainer();
+        generator.save();
+        DataContainer container = new DataContainer(islandTracker.getDataContainer());
         Map<String, Object> serial = islandTracker.serialize();
+        Assert.assertEquals(container.serialize(), serial);
         DataContainer reconstructedContainer = new DataContainer(serial);
         Assert.assertEquals(container, reconstructedContainer);
         IslandTracker reconstructedTracker = IslandTracker.deserialise(serial);

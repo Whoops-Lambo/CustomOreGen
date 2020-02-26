@@ -74,7 +74,9 @@ public abstract class AbstractGenerator implements BlockGenerator {
      */
     public AbstractGenerator(UUID fromID) throws IllegalArgumentException {
         Objects.requireNonNull(fromID);
-        ConfigurationSection section = data.getConfigurationSection(fromID.toString());
+        ConfigurationSection section = data.getConfigurationSection("DefaultData");
+        section = section == null ? data.createSection("DefaultData") : section;
+        section = section.getConfigurationSection(fromID.toString());
         if (section == null) {
             throw new IllegalArgumentException("No Generator with ID: " + fromID.toString() + " in data file!");
         }
@@ -124,6 +126,7 @@ public abstract class AbstractGenerator implements BlockGenerator {
             Class<? extends AbstractGenerator> clazz = unknown.asSubclass(AbstractGenerator.class);
             return Optional.of(clazz.getConstructor(UUID.class).newInstance(generatorID));
         } catch (ReflectiveOperationException ex) {
+            ex.printStackTrace();
             Common.log(Level.SEVERE, "&c[Data] Error occurred when trying to reconstruct a generator!");
             throw new IllegalStateException(ex);
         }

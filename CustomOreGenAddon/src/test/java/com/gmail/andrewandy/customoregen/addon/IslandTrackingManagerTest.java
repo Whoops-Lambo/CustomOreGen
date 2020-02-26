@@ -41,7 +41,7 @@ public class IslandTrackingManagerTest {
         }
         assert randomIslandID != null;
         IslandTracker randomTracker = islands.get(randomIslandID);
-        Assert.assertSame(randomTracker, manager.getTracker(randomIslandID));
+        Assert.assertEquals(randomTracker, manager.getTracker(randomIslandID));
     }
 
     @Test

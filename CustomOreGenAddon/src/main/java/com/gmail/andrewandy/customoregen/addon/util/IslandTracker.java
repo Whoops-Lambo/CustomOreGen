@@ -49,7 +49,10 @@ public class IslandTracker implements ConfigurationSerializable, Cloneable {
      * @see #deserialise(Map)
      */
     public static IslandTracker fromDataContainer(DataContainer dataContainer) {
-        String island = Objects.requireNonNull(dataContainer).getString("Island", true);
+        if (!Objects.requireNonNull(dataContainer).containsKey(IDENTIFIER_KEY)) {
+            throw new IllegalArgumentException("Identifier key missing!");
+        }
+        String island = dataContainer.getString("Island", true);
         if (island == null) {
             throw new IllegalArgumentException("Null island!");
         }
@@ -67,18 +70,14 @@ public class IslandTracker implements ConfigurationSerializable, Cloneable {
         if (!(rawIsland instanceof String)) {
             throw new IllegalArgumentException("Invalid serial");
         }
-        Object rawData = serial.get("Data");
-        if (!(rawData instanceof DataContainer)) {
-            throw new IllegalArgumentException("Unable to reconstruct data container!");
-        }
-        DataContainer container = (DataContainer) rawData;
+        DataContainer container = new DataContainer(serial);
         //Check the identifier
         Optional<String> identifierValue = container.getString(IDENTIFIER_KEY);
         if (!identifierValue.isPresent() || !identifierValue.get().equalsIgnoreCase(IslandTracker.class.getName())) {
             throw new IllegalArgumentException("Invalid data container! Missing or invalid identifier key!");
         }
         IslandTracker tracker = new IslandTracker((String) rawIsland);
-        tracker.dataContainer = (DataContainer) rawData;
+        tracker.dataContainer = new DataContainer(container);
         IslandOreGenerator oreGenerator;
         Optional<String> rawGenerator = tracker.getDataContainer().getString("Generator");
         if (rawGenerator.isPresent()) {
@@ -119,7 +118,7 @@ public class IslandTracker implements ConfigurationSerializable, Cloneable {
     private IslandTracker updateGeneratorData() {
         if (generator != null) {
             generator.save();
-            dataContainer.set("Generator", generator.getGeneratorID());
+            dataContainer.set("Generator", generator.getGeneratorID().toString());
         } else {
             dataContainer.set("Generator", (UUID) null);
         }

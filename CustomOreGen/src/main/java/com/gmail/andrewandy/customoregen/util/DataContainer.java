@@ -37,24 +37,26 @@ public class DataContainer implements ConfigurationSerializable {
 
 
     public static boolean isSupported(Class<?> clazz) {
-        //TODO fix type erasure issue
+        if (clazz == null) {
+            return false;
+        }
         if (clazz.isArray()) {
             clazz = clazz.getComponentType();
         }
         for (Class<?> supported : supportedClasses) {
-            if (clazz.isAssignableFrom(supported) || clazz.equals(supported)) {
+            if (clazz.equals(supported) || clazz.getCanonicalName().equalsIgnoreCase(supported.getCanonicalName())) {
                 return true;
             }
         }
         return false;
     }
 
-    public void set(String key, Object... objects) throws UnsupportedOperationException {
-        if (!isSupported(objects.getClass())) {
+    public void set(String key, Object object) throws UnsupportedOperationException {
+        if (!isSupported(object.getClass())) {
             throw new UnsupportedOperationException();
         }
         container.remove(key);
-        container.put(key, objects);
+        container.put(key, object);
     }
 
     public boolean containsKey(String key) {
@@ -166,4 +168,18 @@ public class DataContainer implements ConfigurationSerializable {
         return container;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DataContainer container1 = (DataContainer) o;
+
+        return Objects.equals(container, container1.container);
+    }
+
+    @Override
+    public int hashCode() {
+        return container != null ? container.hashCode() : 0;
+    }
 }

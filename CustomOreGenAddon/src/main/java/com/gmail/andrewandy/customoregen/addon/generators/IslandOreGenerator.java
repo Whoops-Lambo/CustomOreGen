@@ -34,7 +34,9 @@ public class IslandOreGenerator extends IslandRegionGenerator {
     public IslandOreGenerator(UUID generatorID) {
         super(generatorID);
         validateHook();
-        for (int level = 0; level < maxLevel(); level++) {
+        spawnChances = new ArrayList<>(getMaxLevel() + 1);
+        spawnChances.add(0, null);
+        for (int level = 1; level < maxLevel(); level++) {
             String jsonMapped = getDataSection().getString(GEN_CHANCE_HELPER_KEY + ":" + level);
             setSpawnChances(jsonMapped, level);
         }
@@ -135,10 +137,14 @@ public class IslandOreGenerator extends IslandRegionGenerator {
     }
 
     private void setSpawnChances(String serial, int level) {
-        if (level < 1 || level > maxLevel()) {
+        if (level < 1 || level > maxLevel() + 1) {
             throw new IllegalArgumentException("Invalid level!");
         }
-        spawnChances.set(level, new GenerationChanceHelper(serial));
+        if (spawnChances.size() - 1 < level) {
+            spawnChances.add(level, new GenerationChanceHelper(serial));
+        } else {
+            spawnChances.set(level, new GenerationChanceHelper(serial));
+        }
     }
 
     public List<GenerationChanceHelper> getAllSpawnChances() {

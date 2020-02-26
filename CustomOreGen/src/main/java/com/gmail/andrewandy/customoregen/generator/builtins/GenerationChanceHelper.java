@@ -25,6 +25,7 @@ public class GenerationChanceHelper {
 
     public GenerationChanceHelper(String serial) {
         blockStateChances = new GsonBuilder().create().fromJson(serial, blockStateChanceType);
+        blockStateChances = blockStateChances == null ? new HashMap<>() : blockStateChances;
         recalculateChances();
     }
 

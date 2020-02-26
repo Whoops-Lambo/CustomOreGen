@@ -6,7 +6,6 @@ import com.gmail.andrewandy.customoregen.generator.AbstractGenerator;
 import com.gmail.andrewandy.customoregen.generator.Priority;
 import com.gmail.andrewandy.customoregen.generator.builtins.GenerationChanceHelper;
 import com.gmail.andrewandy.customoregen.generator.builtins.OverworldGenerator;
-import com.gmail.andrewandy.customoregen.hooks.bentobox.BentoBoxHookManager;
 import com.gmail.andrewandy.customoregen.hooks.economy.VaultHook;
 import com.gmail.andrewandy.customoregen.listener.CobbleGeneratorHandler;
 import com.gmail.andrewandy.customoregen.util.DataContainer;
@@ -136,12 +135,11 @@ public class CustomOreGen extends JavaPlugin {
     }
 
     private void loadHooks() {
-        if (!VaultHook.getInstance().isEnabled()) {
+        if (VaultHook.getInstance() == null) {
             Common.log(Level.WARNING, "&aPlugin cannot function without vault!");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
-        BentoBoxHookManager.reload();
     }
 
     private void loadUtils() {

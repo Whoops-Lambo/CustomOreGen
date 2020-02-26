@@ -2,30 +2,29 @@ package com.gmail.andrewandy.customoregen.addon.levels;
 
 import com.gmail.andrewandy.corelib.util.Common;
 import com.gmail.andrewandy.customoregen.CustomOreGen;
-import com.gmail.andrewandy.customoregen.hooks.bentobox.BentoBoxHook;
-import com.gmail.andrewandy.customoregen.hooks.bentobox.skyblock.SkyblockHook;
+import com.gmail.andrewandy.customoregen.addon.CustomOreGenAddon;
 import org.bukkit.World;
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.request.AddonRequestBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.logging.Level;
 
-public class IslandLevelsHook extends BentoBoxHook {
+public class IslandLevelsHook {
 
     private static IslandLevelsHook instance;
 
+
     private IslandLevelsHook() {
-        super("Level");
         Common.log(Level.INFO, "&a[Hooks] &bAttempting to hook into Island Level...");
-        if (getAddons().length == 0) {
-            Common.log(Level.INFO, "&a[Hooks] &bLevel Addon not found. Skipping...");
+        Optional<Addon> optional = BentoBox.getInstance().getAddonsManager().getAddonByName("Level");
+        if (!optional.isPresent()) {
+            Common.log(Level.INFO, "&a[Hooks] Level addon not found. Skipping...");
         }
-        if (!(getAddons()[0] instanceof world.bentobox.level.Level)) {
-            Common.log(Level.INFO, "&a[Hooks] &bLevel Addon not found. Skipping...");
-            instance = null;
-        }
-        if (SkyblockHook.getInstance() == null) {
+        if (CustomOreGenAddon.getInstance() == null) {
             Common.log(Level.WARNING, "&a[Hooks] &cNo Skyblock addon was found! Disabling.");
             instance = null;
             return;
@@ -60,17 +59,14 @@ public class IslandLevelsHook extends BentoBoxHook {
         Common.log(Level.INFO, "&aLoad complete! Took " + (System.currentTimeMillis() - millis) + "ms");
     }
 
-    @Override
     public boolean isEnabled() {
         return instance != null;
     }
 
-    @Override
     public void onEnable() {
         new IslandLevelsHook();
     }
 
-    @Override
     public void onDisable() {
         IslandLevelOreGenerator.unregisterListener();
         instance = null;

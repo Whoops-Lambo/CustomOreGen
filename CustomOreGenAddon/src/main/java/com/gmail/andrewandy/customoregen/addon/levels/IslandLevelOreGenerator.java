@@ -2,9 +2,9 @@ package com.gmail.andrewandy.customoregen.addon.levels;
 
 import com.gmail.andrewandy.corelib.util.DeregisterableListener;
 import com.gmail.andrewandy.customoregen.CustomOreGen;
+import com.gmail.andrewandy.customoregen.addon.generators.IslandOreGenerator;
 import com.gmail.andrewandy.customoregen.generator.BlockGenerator;
 import com.gmail.andrewandy.customoregen.generator.Priority;
-import com.gmail.andrewandy.customoregen.hooks.bentobox.skyblock.generators.IslandOreGenerator;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -121,10 +121,9 @@ public class IslandLevelOreGenerator extends IslandOreGenerator {
 
 
     public int getGeneratorLevelFromIslandLevel() {
-        Level level = (Level) IslandLevelsHook.getInstance().getAddons()[0];
         Optional<Island> optional = BentoBox.getInstance().getIslands().getIslandById(getIslandID());
         if (optional.isPresent()) {
-            long islandLevel = level.getIslandLevel(optional.get().getWorld(), null);
+            long islandLevel = IslandLevelsHook.getInstance().getIslandLevel(optional.get().getWorld(), optional.get().getOwner().toString());
             for (Map.Entry<Integer, long[]> entry : levelMap.entrySet()) {
                 long[] arr = entry.getValue();
                 if (islandLevel >= arr[0] && islandLevel <= arr[1]) {

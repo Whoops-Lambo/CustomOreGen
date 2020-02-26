@@ -6,10 +6,10 @@
 
     <groupId>com.gmail.andrewandy</groupId>
     <artifactId>CustomOreGen-Parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1-SNAPSHOT</version>
     <modules>
-        <module>CustomOreGenAddon</module>
         <module>CustomOreGen</module>
+        <module>CustomOreGenAddon</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -9,7 +9,6 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.objects.Island;
 
 import java.util.Objects;
@@ -66,7 +65,7 @@ public abstract class IslandRegionGenerator extends AbstractGenerator {
     }
 
     public boolean withinRegion(Location location) {
-        Optional<Island> optionalIsland = BentoBox.getInstance().getIslands().getIslandById(islandID);
+        Optional<Island> optionalIsland = CustomOreGenAddon.getInstance().getPlugin().getIslands().getIslandById(islandID);
         if (!optionalIsland.isPresent()) {
             throw new IllegalStateException("IslandID is invalid, no island was found!");
         }
@@ -75,7 +74,7 @@ public abstract class IslandRegionGenerator extends AbstractGenerator {
     }
 
     public boolean allWithinRegion(Region region) {
-        Optional<Island> optionalIsland = BentoBox.getInstance().getIslands().getIslandById(islandID);
+        Optional<Island> optionalIsland = CustomOreGenAddon.getInstance().getPlugin().getIslands().getIslandById(islandID);
         if (!optionalIsland.isPresent()) {
             throw new IllegalStateException("IslandID is invalid, no island was found!");
         }

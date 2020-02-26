@@ -1,6 +1,6 @@
 package com.gmail.andrewandy.customoregen.addon.levels;
 
-import com.gmail.andrewandy.customoregen.CustomOreGen;
+import com.gmail.andrewandy.customoregen.addon.CustomOreGenAddon;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -96,7 +96,7 @@ public class IslandTemplateMapper implements ConfigurationSerializable, Cloneabl
     }
 
     public BukkitTask save(File file, Consumer<IOException> callback) {
-        return Bukkit.getScheduler().runTask(CustomOreGen.getInstance(), () -> {
+        return Bukkit.getScheduler().runTask(CustomOreGenAddon.getBukkitPlugin(), () -> {
             try {
                 save(file);
             } catch (IOException ex) {

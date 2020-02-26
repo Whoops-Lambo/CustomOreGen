@@ -13,27 +13,6 @@
     <name>CustomOreGen</name>
     <packaging>jar</packaging>
 
-    <dependencies>
-        <dependency>
-            <groupId>world.bentobox</groupId>
-            <artifactId>bentobox</artifactId>
-            <version>1.11.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>world.bentobox</groupId>
-            <artifactId>bskyblock</artifactId>
-            <version>1.10.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>world.bentobox</groupId>
-            <artifactId>level</artifactId>
-            <version>1.9.4-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
-
     <build>
         <defaultGoal>clean package</defaultGoal>
         <plugins>

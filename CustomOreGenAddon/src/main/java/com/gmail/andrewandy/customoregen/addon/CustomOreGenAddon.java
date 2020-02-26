@@ -2,7 +2,6 @@ package com.gmail.andrewandy.customoregen.addon;
 
 import com.gmail.andrewandy.corelib.util.Common;
 import com.gmail.andrewandy.corelib.util.DeregisterableListener;
-import com.gmail.andrewandy.customoregen.CustomOreGen;
 import com.gmail.andrewandy.customoregen.addon.generators.IslandOreGenerator;
 import com.gmail.andrewandy.customoregen.addon.leveling.IslandLevelingManager;
 import com.gmail.andrewandy.customoregen.addon.levels.IslandTemplateMapper;
@@ -12,16 +11,21 @@ import com.gmail.andrewandy.customoregen.addon.util.IslandTrackingManager;
 import com.gmail.andrewandy.customoregen.generator.Priority;
 import com.gmail.andrewandy.customoregen.generator.builtins.GenerationChanceHelper;
 import com.gmail.andrewandy.customoregen.generator.builtins.OverworldGenerator;
+import com.gmail.andrewandy.customoregen.util.FileUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -37,12 +41,28 @@ public final class CustomOreGenAddon extends Addon {
 
     public static IslandOreGenerator defaultGenerator;
     private static CustomOreGenAddon instance;
+    private static JavaPlugin bukkitPlugin;
+    private static YamlConfiguration defaults;
     private final IslandTrackingManager trackingManager = new IslandTrackingManager();
     private DeregisterableListener islandDataHandler = new IslandDataHandler();
 
     private Collection<String> addonNames = Arrays.asList("BSkyblock", "AcidIsland", "CaveBlock");
 
     private CustomOreGenAddon() {
+        Common.setPrefix("&3[CustomOreGen] &d[Addon] &b");
+
+        Plugin plugin = Bukkit.getPluginManager().getPlugin("CustomOreGen");
+        try {
+            Class<?> clazz = com.gmail.andrewandy.customoregen.CustomOreGen.class;
+            if (!clazz.isInstance(plugin)) {
+                Common.log(Level.SEVERE, "&cCustomOreGen main plugin not found!");
+                throw new IllegalStateException();
+            }
+            bukkitPlugin = (JavaPlugin) plugin;
+        } catch (NoClassDefFoundError ex) {
+            Common.log(Level.SEVERE, "&cCustomOreGen main plugin not found!");
+            throw new IllegalStateException();
+        }
         Addon found = null;
         for (String addon : addonNames) {
             Optional<Addon> optionalAddon = BentoBox.getInstance().getAddonsManager().getAddonByName(addon);
@@ -60,9 +80,22 @@ public final class CustomOreGenAddon extends Addon {
         }
         instance = this;
         loadIslandLevellingManager();
+        try {
+            loadFiles();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
         loadDefaultGenerator();
         setupListeners();
         Common.log(Level.INFO, "&a[Hooks] &bSkyblock features enabled!");
+    }
+
+    public static YamlConfiguration getDefaults() {
+        return defaults;
+    }
+
+    public static com.gmail.andrewandy.customoregen.CustomOreGen getBukkitPlugin() {
+        return (com.gmail.andrewandy.customoregen.CustomOreGen) bukkitPlugin;
     }
 
     public static CustomOreGenAddon getInstance() {
@@ -88,8 +121,28 @@ public final class CustomOreGenAddon extends Addon {
     }
 
     private void setupListeners() {
-        Bukkit.getPluginManager().registerEvents(islandDataHandler, CustomOreGen.getInstance());
-        ;
+        Bukkit.getPluginManager().registerEvents(islandDataHandler, getBukkitPlugin());
+    }
+
+    private void loadFiles() throws IOException {
+        Common.log(Level.INFO, "&d[Addon] &bLoading files.");
+        File file = new File(getDataFolder().getAbsolutePath(), "defaults.yml");
+        if (!file.isFile()) {
+            Common.log(Level.INFO, "&d[Addon] &aDefaults file not found, creating one now.");
+            try (InputStream defaultsStream = CustomOreGenAddon.class.getClassLoader().getResourceAsStream("defaults.yml")) {
+                if (defaultsStream == null) {
+                    Common.log(Level.SEVERE, "&d[Addon] &cUnable to load defaults from jar!");
+                    throw new IllegalStateException();
+                }
+                if (!file.createNewFile()) {
+                    Common.log(Level.SEVERE, "&d[Addon] &cUnable to create new file!");
+                    throw new IllegalStateException();
+                }
+                FileUtil.copy(defaultsStream, file);
+            }
+        }
+        defaults = YamlConfiguration.loadConfiguration(file);
+        Common.log(Level.INFO, "&d[Addon] &aLoading complete!");
     }
 
     private void disableListeners() {
@@ -109,7 +162,7 @@ public final class CustomOreGenAddon extends Addon {
     }
 
     private void loadIslandLevellingManager() {
-        File file = CustomOreGen.getInstance().getDataFolder();
+        File file = CustomOreGenAddon.getInstance().getDataFolder();
         File data = new File(file.getAbsolutePath(), "IslandLevelData.yml");
         try {
             if (!data.isFile()) {
@@ -123,7 +176,7 @@ public final class CustomOreGenAddon extends Addon {
     }
 
     private void loadDefaultGenerator() {
-        ConfigurationSection section = CustomOreGen.getDefaults().getConfigurationSection("IslandSettings");
+        ConfigurationSection section = CustomOreGenAddon.getDefaults().getConfigurationSection("IslandSettings");
         assert section != null;
         section = section.getConfigurationSection("DEFAULT");
         if (section == null) {
@@ -179,6 +232,6 @@ public final class CustomOreGenAddon extends Addon {
     public void onDisable() {
         unregisterConfigurationSerialisation();
         disableListeners();
-        Common.log(Level.INFO, "[Hooks] &eBSkyblock hook has been disabled.");
+        Common.log(Level.INFO, "&aCustomOreGenAddon has been disabled.");
     }
 }

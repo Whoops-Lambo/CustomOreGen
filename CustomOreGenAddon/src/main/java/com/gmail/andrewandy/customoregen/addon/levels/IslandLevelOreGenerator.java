@@ -12,7 +12,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.level.Level;
 import world.bentobox.level.event.IslandPreLevelEvent;
 
 import java.util.*;

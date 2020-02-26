@@ -2,9 +2,9 @@ package com.gmail.andrewandy.customoregen.addon.listener;
 
 import com.gmail.andrewandy.corelib.util.DeregisterableListener;
 import com.gmail.andrewandy.customoregen.CustomOreGen;
-import com.gmail.andrewandy.customoregen.addon.levels.IslandTemplateMapper;
 import com.gmail.andrewandy.customoregen.addon.CustomOreGenAddon;
 import com.gmail.andrewandy.customoregen.addon.generators.IslandOreGenerator;
+import com.gmail.andrewandy.customoregen.addon.levels.IslandTemplateMapper;
 import com.gmail.andrewandy.customoregen.generator.BlockGenerator;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

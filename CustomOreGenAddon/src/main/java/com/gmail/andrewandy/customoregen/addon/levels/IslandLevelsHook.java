@@ -1,7 +1,6 @@
 package com.gmail.andrewandy.customoregen.addon.levels;
 
 import com.gmail.andrewandy.corelib.util.Common;
-import com.gmail.andrewandy.customoregen.CustomOreGen;
 import com.gmail.andrewandy.customoregen.addon.CustomOreGenAddon;
 import org.bukkit.World;
 import world.bentobox.bentobox.BentoBox;
@@ -49,7 +48,7 @@ public class IslandLevelsHook {
     private void loadIslandTemplates() throws IOException {
         Common.log(Level.INFO, "&aLoading island templates mapper from disk.");
         long millis = System.currentTimeMillis();
-        File file = CustomOreGen.getInstance().getDataFolder();
+        File file = CustomOreGenAddon.getBukkitPlugin().getDataFolder();
         file = new File(file.getAbsolutePath(), "IslandTemplateMapper.yml");
         if (!file.isFile()) {
             Common.log(Level.INFO, "&aTemplate Mapper data file not found, creating one now.");

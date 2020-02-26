@@ -18,8 +18,8 @@ public class IslandTracker implements ConfigurationSerializable, Cloneable {
     private static final String IDENTIFIER_KEY = "ISLAND_TRACKER_IDENTIFY";
 
     static {
-        if (!CustomOreGenAddon.getInstance().isEnabled()) {
-            Common.log(Level.WARNING, "&eLoaded IslandTracker without BSkyblock enabled!");
+        if (CustomOreGenAddon.getInstance() == null) {
+            Common.log(Level.WARNING, "&eLoaded IslandTracker without Skyblock enabled!");
         }
     }
 

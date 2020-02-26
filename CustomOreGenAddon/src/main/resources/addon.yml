@@ -1,4 +1,6 @@
 main: com.gmail.andrewandyv
-name: CustomOreGen
+name: CustomOreGenAddon
 version: ${project.version}
 authors: [andrewandy]
+description:
+  Addon for the spigot CustomOreGen plugin!

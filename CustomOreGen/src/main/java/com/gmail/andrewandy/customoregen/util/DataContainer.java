@@ -7,17 +7,17 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class DataContainer implements ConfigurationSerializable {
 
-    private static final Collection<Class<?>> supportedClasses;
+    private static final Collection<Class<?>> wrappers = Arrays.asList(
+            Integer.class, Boolean.class, Byte.class, Short.class, Double.class, Long.class,
+            Float.class, Character.class
+    );
 
-    static {
-        supportedClasses = Arrays.asList(
-                int.class,
-                double.class,
-                float.class,
-                long.class,
-                short.class,
-                byte.class,
-                String.class);
+    private static boolean isPrimitiveWrapper(Class<?> clazz) {
+        if (clazz == null) {
+            return false;
+        }
+        clazz = clazz.isArray() ? clazz.getComponentType() : clazz;
+        return wrappers.contains(clazz);
     }
 
     private Map<String, Object> container = new ConcurrentHashMap<>();
@@ -37,21 +37,21 @@ public class DataContainer implements ConfigurationSerializable {
 
 
     public static boolean isSupported(Class<?> clazz) {
-        if (clazz == null) {
+        if (clazz == null || clazz == Void.class) {
             return false;
         }
         if (clazz.isArray()) {
             clazz = clazz.getComponentType();
         }
-        for (Class<?> supported : supportedClasses) {
-            if (clazz.equals(supported) || clazz.getCanonicalName().equalsIgnoreCase(supported.getCanonicalName())) {
-                return true;
-            }
-        }
-        return false;
+        return clazz.isPrimitive() || clazz.equals(String.class) || isPrimitiveWrapper(clazz);
     }
 
     public void set(String key, Object object) throws UnsupportedOperationException {
+        if (object == null) {
+            container.remove(key);
+            container.put(key, null);
+            return;
+        }
         if (!isSupported(object.getClass())) {
             throw new UnsupportedOperationException();
         }
@@ -144,6 +144,10 @@ public class DataContainer implements ConfigurationSerializable {
             return (String) container.get(key);
         }
         return null;
+    }
+
+    public Optional<Character> getChar(String key) {
+        return Optional.of((Character) container.get(key));
     }
 
     public Collection<Object> getValues() {

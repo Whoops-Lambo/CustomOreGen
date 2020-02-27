@@ -2,10 +2,12 @@ package com.gmail.andrewandy.customoregen.addon;
 
 import com.gmail.andrewandy.customoregen.addon.util.IslandTracker;
 import com.gmail.andrewandy.customoregen.addon.util.IslandTrackingManager;
+import com.gmail.andrewandy.customoregen.util.DataContainer;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.jupiter.api.Order;
 
@@ -20,9 +22,17 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class IslandTrackingManagerTest {
 
-    private static IslandTrackingManager manager = new IslandTrackingManager();
+    private static IslandTrackingManager manager;
     private static final int totalIslands = 100;
     private static Map<String, IslandTracker> islands = new HashMap<>(totalIslands);
+
+    @BeforeClass
+    public static void loadVariables() {
+        ConfigurationSerialization.registerClass(DataContainer.class);
+        ConfigurationSerialization.registerClass(IslandTracker.class);
+        ConfigurationSerialization.registerClass(IslandTrackingManager.class);
+        manager = new IslandTrackingManager();
+    }
 
     @Test
     @Order(0)
@@ -50,7 +60,8 @@ public class IslandTrackingManagerTest {
         YamlConfiguration configuration = new YamlConfiguration();
         File file;
         try {
-            file = File.createTempFile("Data", ".yml");
+            file = File.createTempFile(UUID.randomUUID().toString(), ".yml");
+            file.deleteOnExit();
             manager.saveToFile(file);
         } catch (IOException ex) {
             Assert.fail(ex.getMessage());
@@ -80,17 +91,17 @@ public class IslandTrackingManagerTest {
             field = IslandTrackingManager.class.getDeclaredField("SERIAL_KEY");
             field.setAccessible(true);
             SERIAL_KEY = (String) field.get(null);
+            field.setAccessible(false);
         } catch (ReflectiveOperationException ex) {
             Assert.fail(ex.getMessage());
         }
         assert IDENTIFIER != null && SERIAL_KEY != null;
-        ConfigurationSerialization.registerClass(IslandTrackingManager.class);
         YamlConfiguration configuration = new YamlConfiguration();
         configuration.set("PATH", manager);
+        Map<String, Object> map = manager.serialize();
         Assert.assertFalse(IslandTrackingManager.fromData(configuration).isPresent());
         configuration.set(SERIAL_KEY, manager);
         Assert.assertTrue(IslandTrackingManager.fromData(configuration).isPresent());
-        Map<String, Object> map = manager.serialize();
         map.remove(SERIAL_KEY);
         try {
             new IslandTrackingManager(map);

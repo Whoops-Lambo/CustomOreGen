@@ -32,16 +32,9 @@ public class IslandTrackingManager implements ConfigurationSerializable {
         if (!Objects.requireNonNull(serialMap).containsKey(IDENTIFIER_KEY)) {
             throw new IllegalArgumentException("Invalid serial provided! Identifier key was missing.");
         }
-        serialMap.remove(IDENTIFIER_KEY);
-        for (Map.Entry<String, Object> entry : serialMap.entrySet()) {
-            String key = entry.getKey();
-            Object value = entry.getValue();
-            if (!(value instanceof IslandTracker)) {
-                throw new IllegalArgumentException("Map contains invalid types!");
-            }
-            trackerMap.put(key, (IslandTracker) value);
-        }
+        this.trackerMap = new HashMap<>();
         data = new YamlConfiguration();
+        throw new IllegalArgumentException();
     }
 
     public static Optional<IslandTrackingManager> fromData(YamlConfiguration configuration) {
@@ -73,8 +66,9 @@ public class IslandTrackingManager implements ConfigurationSerializable {
 
     @Override
     public Map<String, Object> serialize() {
-        Map<String, Object> map = new HashMap<>(trackerMap);
+        Map<String, Object> map = new HashMap<>();
         map.put(IDENTIFIER_KEY, "null");
+        map.putAll(trackerMap);
         return map;
     }
 
@@ -85,7 +79,7 @@ public class IslandTrackingManager implements ConfigurationSerializable {
      * @throws IOException Thrown if IO errors ocurred when writing to disk.
      */
     public void saveToFile(File file) throws IOException {
-        data.set(SERIAL_KEY, this);
+        data.set(SERIAL_KEY, this); //TODO: does this --> Sout(data.saveToString gives "SERIAL_KEY: ==:"packagename.IslandTracker");
         data.save(file);
     }
 }

@@ -20,6 +20,7 @@ public class IslandTrackerTest {
     static {
         CustomOreGenAddon.class.getClassLoader();
         ConfigurationSerialization.registerClass(IslandTracker.class);
+        ConfigurationSerialization.registerClass(DataContainer.class);
         try {
             AbstractGenerator.setDataFile(File.createTempFile("Temp", ".yml"));
         } catch (IOException e) {

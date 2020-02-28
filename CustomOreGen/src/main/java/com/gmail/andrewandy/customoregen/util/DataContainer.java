@@ -20,6 +20,37 @@ public class DataContainer implements ConfigurationSerializable {
         return wrappers.contains(clazz);
     }
 
+    public static Class<?> getPrimitiveClassFor(Class<?> wrapperClass) {
+        if (wrapperClass == null) {
+            throw new IllegalArgumentException();
+        }
+        if (wrapperClass.isPrimitive()) {
+            return wrapperClass;
+        }
+        if (!isPrimitiveWrapper(wrapperClass)) {
+            throw new IllegalArgumentException();
+        }
+        if (wrapperClass == Integer.class) {
+            return Integer.TYPE;
+        } else if (wrapperClass == Boolean.class) {
+            return Boolean.TYPE;
+        } else if (wrapperClass == Short.class) {
+            return Short.TYPE;
+        } else if (wrapperClass == Double.class) {
+            return Double.TYPE;
+        } else if (wrapperClass == Long.class) {
+            return Long.TYPE;
+        } else if (wrapperClass == Float.class) {
+            return Float.TYPE;
+        } else if (wrapperClass == Character.class) {
+            return Character.TYPE;
+        } else if (wrapperClass == Byte.class) {
+            return Byte.TYPE;
+        } else {
+            throw new IllegalStateException("Unknown wrapper class!");
+        }
+    }
+
     private Map<String, Object> container = new ConcurrentHashMap<>();
 
     public DataContainer(Map<String, Object> serial) {
@@ -49,7 +80,6 @@ public class DataContainer implements ConfigurationSerializable {
     public void set(String key, Object object) throws UnsupportedOperationException {
         if (object == null) {
             container.remove(key);
-            container.put(key, null);
             return;
         }
         if (!isSupported(object.getClass())) {
@@ -67,8 +97,25 @@ public class DataContainer implements ConfigurationSerializable {
         return get(key, targetType).isPresent();
     }
 
+    @SuppressWarnings("unchecked")
     public <T> Optional<T> get(String key, Class<T> targetType) {
-        Object obj = container.get(Objects.requireNonNull(key));
+        if (!isSupported(targetType) || !containsKey(Objects.requireNonNull(key))) {
+            return Optional.empty();
+        }
+        Object obj = container.get(key);
+        assert obj != null;
+        Class<?> objectClass = obj.getClass();
+        //Check if object class is something like Integer.class and target class is int.class
+        if (targetType.isPrimitive() && isPrimitiveWrapper(objectClass)) {
+            //If say, the target class is int.class and the object's
+            //is Integer.class, then the primitive for Integer.class would be int.class
+            Class<?> primitive = getPrimitiveClassFor(objectClass);
+            //Thus, if the primitive of the object's class == target class then it
+            //is safe to unbox the value.
+            if (primitive == targetType) {
+                return Optional.of((T) obj);
+            }
+        }
         if (!targetType.isInstance(obj)) {
             return Optional.empty();
         }
@@ -169,21 +216,19 @@ public class DataContainer implements ConfigurationSerializable {
 
     @Override
     public Map<String, Object> serialize() {
-        return container;
+        return new HashMap<>(container);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         DataContainer container1 = (DataContainer) o;
-
         return Objects.equals(container, container1.container);
     }
 
     @Override
     public int hashCode() {
-        return container != null ? container.hashCode() : 0;
+        return container != null ? 29 * container.hashCode() : 0;
     }
 }

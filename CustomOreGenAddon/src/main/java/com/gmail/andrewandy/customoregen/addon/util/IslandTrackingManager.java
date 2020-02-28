@@ -18,11 +18,9 @@ public class IslandTrackingManager implements ConfigurationSerializable {
     private static final String SERIAL_KEY = "ISLAND_TRACKING_MANAGER";
     private static final String IDENTIFIER_KEY = "ISLAND_TRACKING_IDENTIFY";
 
-    private YamlConfiguration data;
     private Map<String, IslandTracker> trackerMap = new HashMap<>();
 
     public IslandTrackingManager() {
-        data = new YamlConfiguration();
     }
 
     /**
@@ -32,9 +30,21 @@ public class IslandTrackingManager implements ConfigurationSerializable {
         if (!Objects.requireNonNull(serialMap).containsKey(IDENTIFIER_KEY)) {
             throw new IllegalArgumentException("Invalid serial provided! Identifier key was missing.");
         }
-        this.trackerMap = new HashMap<>();
-        data = new YamlConfiguration();
-        throw new IllegalArgumentException();
+        serialMap = new HashMap<>(serialMap);
+        serialMap.remove(IDENTIFIER_KEY);
+        Map<String, IslandTracker> map = new HashMap<>();
+        for (Map.Entry<String, Object> entry : serialMap.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if (key == null || key.contentEquals("==") || value == null) {
+                continue;
+            }
+            if (!(value instanceof IslandTracker)) {
+                throw new IllegalArgumentException("Invalid type " + value.getClass() + " detected!");
+            }
+            map.put(key, (IslandTracker) value);
+        }
+        this.trackerMap = map;
     }
 
     public static Optional<IslandTrackingManager> fromData(YamlConfiguration configuration) {
@@ -55,8 +65,7 @@ public class IslandTrackingManager implements ConfigurationSerializable {
      * no tracker was found in the cache.
      */
     public IslandTracker getTracker(String islandID) {
-        IslandTracker tracker = trackerMap.get(islandID);
-        return tracker == null ? new IslandTracker(islandID) : tracker;
+        return trackerMap.computeIfAbsent(islandID, key -> new IslandTracker(islandID));
     }
 
     public void setTracker(String islandID, IslandTracker tracker) {
@@ -76,10 +85,28 @@ public class IslandTrackingManager implements ConfigurationSerializable {
      * Save the current state of this manager to disk.
      *
      * @param file The file to save to.
-     * @throws IOException Thrown if IO errors ocurred when writing to disk.
+     * @throws IOException Thrown if IO errors occurs when writing to disk.
      */
     public void saveToFile(File file) throws IOException {
-        data.set(SERIAL_KEY, this); //TODO: does this --> Sout(data.saveToString gives "SERIAL_KEY: ==:"packagename.IslandTracker");
-        data.save(file);
+        YamlConfiguration newConfig = new YamlConfiguration();
+        writeToConfiguration(newConfig);
+        newConfig.save(file);
+    }
+
+    public void writeToConfiguration(YamlConfiguration yamlConfiguration) {
+        Objects.requireNonNull(yamlConfiguration).set(SERIAL_KEY, this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        IslandTrackingManager manager = (IslandTrackingManager) o;
+        return Objects.equals(trackerMap, manager.trackerMap);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(trackerMap);
     }
 }

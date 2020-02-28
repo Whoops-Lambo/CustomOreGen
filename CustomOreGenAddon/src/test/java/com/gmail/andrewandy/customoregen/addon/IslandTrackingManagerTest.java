@@ -23,8 +23,12 @@ import java.util.concurrent.ThreadLocalRandom;
 public class IslandTrackingManagerTest {
 
     private static IslandTrackingManager manager;
-    private static final int totalIslands = 100;
-    private static Map<String, IslandTracker> islands = new HashMap<>(totalIslands);
+    private final int totalIslands = 100;
+    private Map<String, IslandTracker> islands = new HashMap<>(totalIslands);
+
+    public IslandTrackingManagerTest() {
+
+    }
 
     @BeforeClass
     public static void loadVariables() {
@@ -54,30 +58,6 @@ public class IslandTrackingManagerTest {
         Assert.assertEquals(randomTracker, manager.getTracker(randomIslandID));
     }
 
-    @Test
-    @Order(2)
-    public void serialisationTest() {
-        YamlConfiguration configuration = new YamlConfiguration();
-        File file;
-        try {
-            file = File.createTempFile(UUID.randomUUID().toString(), ".yml");
-            file.deleteOnExit();
-            manager.saveToFile(file);
-        } catch (IOException ex) {
-            Assert.fail(ex.getMessage());
-            return;
-        }
-        try {
-            configuration.load(file);
-        } catch (InvalidConfigurationException | IOException ex) {
-            Assert.fail(ex.getMessage());
-            return;
-        }
-        Optional<IslandTrackingManager> optional = IslandTrackingManager.fromData(configuration);
-        Assert.assertTrue(optional.isPresent());
-        IslandTrackingManager current = optional.get();
-        Assert.assertEquals(current, manager);
-    }
 
     @Test
     @Order(1)
@@ -102,13 +82,33 @@ public class IslandTrackingManagerTest {
         Assert.assertFalse(IslandTrackingManager.fromData(configuration).isPresent());
         configuration.set(SERIAL_KEY, manager);
         Assert.assertTrue(IslandTrackingManager.fromData(configuration).isPresent());
-        map.remove(SERIAL_KEY);
+        map.remove(IDENTIFIER);
         try {
             new IslandTrackingManager(map);
-            Assert.fail("Null serial key not detected!");
+            Assert.fail("Null identifier key not detected!");
         } catch (IllegalArgumentException ignored) {
         }
     }
 
+    @Test
+    @Order(2)
+    public void serialisationTest() {
+        YamlConfiguration configuration = new YamlConfiguration();
+        File file;
+        try {
+            file = File.createTempFile(UUID.randomUUID().toString(), ".yml");
+            file.deleteOnExit();
+            manager.saveToFile(file);
+            configuration.load(file);
+        } catch (IOException | InvalidConfigurationException ex) {
+            ex.printStackTrace();
+            Assert.fail(ex.getMessage());
+            return;
+        }
+        Optional<IslandTrackingManager> reconstructed = IslandTrackingManager.fromData(configuration);
+        Assert.assertTrue(reconstructed.isPresent());
+        IslandTrackingManager other = reconstructed.get();
+        Assert.assertEquals(other, manager);
+    }
 
 }

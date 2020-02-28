@@ -145,6 +145,3 @@ buildNumber.properties
 .flattened-pom.xml
 
 # End of https://www.gitignore.io/api/git,macos,maven,intellij+all
-
-### Custom folders ###
-finished-jars/

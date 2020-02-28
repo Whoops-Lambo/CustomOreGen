@@ -45,15 +45,15 @@ public final class CustomOreGenAddon extends Addon {
     private final IslandTrackingManager trackingManager;
     private DeregisterableListener islandDataHandler = new IslandDataHandler();
 
-    private Collection<String> addonNames = Arrays.asList("BSkyblock", "AcidIsland", "CaveBlock");
+    private Collection<String> addonNames = Arrays.asList("BSkyblock", "AcidIsland", "CaveBlock", "SkyGrid");
 
 
-    private CustomOreGenAddon(Object unused) {
+    public CustomOreGenAddon(Object unused) {
         instance = this;
         trackingManager = new IslandTrackingManager();
     }
 
-    private CustomOreGenAddon() {
+    public CustomOreGenAddon() {
         Common.setPrefix("&3[CustomOreGen] &d[Addon] &b");
 
         Plugin plugin = Bukkit.getPluginManager().getPlugin("CustomOreGen");
@@ -103,7 +103,6 @@ public final class CustomOreGenAddon extends Addon {
         }
         loadDefaultGenerator();
         setupListeners();
-        Common.log(Level.INFO, "&a[Hooks] &bSkyblock features enabled!");
     }
 
     public static void setToNullInstance() {
@@ -245,7 +244,9 @@ public final class CustomOreGenAddon extends Addon {
 
     @Override
     public void onEnable() {
+        Common.log(Level.INFO, "&aPlugin load started.!");
         loadDefaultGenerator();
+        Common.log(Level.INFO, "&a[Hooks] &bSkyblock features enabled!");
     }
 
     @Override

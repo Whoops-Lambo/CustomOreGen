@@ -1,6 +1,6 @@
-main: com.gmail.andrewandyv
+main: com.gmail.andrewandy.customoregen.addon.CustomOreGenAddon
 name: CustomOreGenAddon
 version: ${project.version}
 authors: [andrewandy]
-description:
-  Addon for the spigot CustomOreGen plugin!
+softdepend: [BSkyblock, AcidIsland, CaveBlock, SkyGrid]
+description: Addon for the spigot CustomOreGen plugin!

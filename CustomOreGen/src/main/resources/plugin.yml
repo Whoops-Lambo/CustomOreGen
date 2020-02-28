@@ -1,14 +1,14 @@
-main: com.gmail.andrewandy.com.gmail.andrewandy.customoregen.CustomOreGen
+main: com.gmail.andrewandy.customoregen.CustomOreGen
 name: "CustomOreGen"
 author: andrewandy
 version: ${project.version}
 api-version: 1.15
 prefix: ""
 load: STARTUP
+loadbefore:
+  - BentoBox
 depend:
   - Vault
-softdepend:
-  - BentoBox
 commands:
   CustomOreGen:
     aliases: cog

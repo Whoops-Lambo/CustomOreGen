@@ -95,14 +95,6 @@ public final class CustomOreGenAddon extends Addon {
             throw new IllegalStateException(ex);
         }
         this.trackingManager = loadManager(file).orElse(new IslandTrackingManager());
-        loadIslandLevellingManager();
-        try {
-            loadFiles();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        loadDefaultGenerator();
-        setupListeners();
     }
 
     public static void setToNullInstance() {
@@ -252,6 +244,18 @@ public final class CustomOreGenAddon extends Addon {
     @Override
     public boolean isEnabled() {
         return instance != null;
+    }
+
+    @Override
+    public void onLoad() {
+        loadIslandLevellingManager();
+        try {
+            loadFiles();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        loadDefaultGenerator();
+        setupListeners();
     }
 
     @Override

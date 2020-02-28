@@ -4,8 +4,12 @@ import com.gmail.andrewandy.corelib.util.Common;
 import com.gmail.andrewandy.customoregen.addon.generators.IslandOreGenerator;
 import com.gmail.andrewandy.customoregen.generator.AbstractGenerator;
 import com.gmail.andrewandy.customoregen.util.DataContainer;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
+import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -14,7 +18,9 @@ import java.util.logging.Level;
 
 public class IslandTracker implements ConfigurationSerializable, Cloneable {
 
-    private static final String IDENTIFIER_KEY = "ISLAND_TRACKER_IDENTIFY";
+    public static final transient Type TYPE = new TypeToken<IslandTracker>() {
+    }.getType();
+    private static final transient String IDENTIFIER_KEY = "ISLAND_TRACKER_IDENTIFY";
 
     /*
     static {
@@ -24,10 +30,9 @@ public class IslandTracker implements ConfigurationSerializable, Cloneable {
     }
 
      */
-
     private final String islandID;
     private DataContainer dataContainer;
-    private IslandOreGenerator generator;
+    private transient IslandOreGenerator generator;
 
     public IslandTracker(String islandID) {
         this(islandID, new DataContainer());
@@ -95,6 +100,15 @@ public class IslandTracker implements ConfigurationSerializable, Cloneable {
         }
         tracker.generator = oreGenerator;
         return tracker;
+    }
+
+    public static Optional<IslandTracker> fromJson(String json) {
+        return Optional.of(new GsonBuilder().create().fromJson(json, TYPE));
+    }
+
+    public String toJson() {
+        Gson gson = new GsonBuilder().create();
+        return gson.toJson(this, TYPE);
     }
 
     @Override

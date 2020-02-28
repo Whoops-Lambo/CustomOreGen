@@ -30,6 +30,7 @@ public class IslandOreGenerator extends IslandRegionGenerator {
 
     private final double[] levelUpCost;
     private List<GenerationChanceHelper> spawnChances;
+    private int manualMaxLevel;
 
     public IslandOreGenerator(UUID generatorID) {
         super(generatorID);
@@ -196,6 +197,25 @@ public class IslandOreGenerator extends IslandRegionGenerator {
         ItemWrapper wrapper = ItemWrapper.wrap(original);
         for (int level = 1; level < maxLevel(); level++) {
             wrapper.setString(GEN_CHANCE_HELPER_KEY + ":" + level, getSpawnChances(level).serialise());
+        }
+    }
+
+    @Override
+    public int maxLevel() {
+        return manualMaxLevel;
+    }
+
+    public void setMaxLevel(int maxLevel) {
+        if (maxLevel < 1) {
+            throw new IllegalArgumentException("Invalid max level!");
+        }
+        manualMaxLevel = maxLevel;
+        trimToMaxLevel();
+    }
+
+    protected void trimToMaxLevel() {
+        if (maxLevel() < getLevel()) {
+            setLevel(maxLevel());
         }
     }
 

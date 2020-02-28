@@ -2,7 +2,6 @@ package com.gmail.andrewandy.customoregen.addon;
 
 import com.gmail.andrewandy.corelib.util.Common;
 import com.gmail.andrewandy.corelib.util.DeregisterableListener;
-import com.gmail.andrewandy.customoregen.CustomOreGen;
 import com.gmail.andrewandy.customoregen.addon.generators.IslandOreGenerator;
 import com.gmail.andrewandy.customoregen.addon.leveling.IslandLevelingManager;
 import com.gmail.andrewandy.customoregen.addon.levels.IslandTemplateMapper;
@@ -16,7 +15,6 @@ import com.gmail.andrewandy.customoregen.util.FileUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.Plugin;
@@ -39,21 +37,23 @@ import java.util.logging.Level;
 public final class CustomOreGenAddon extends Addon {
 
     private static final List<String> SPECIAL_KEYS = Arrays.asList("COST");
-
+    private static final CustomOreGenAddon nullInstance = new CustomOreGenAddon(null);
     public static IslandOreGenerator defaultGenerator;
     private static CustomOreGenAddon instance;
     private static JavaPlugin bukkitPlugin;
     private static YamlConfiguration defaults;
-    private final IslandTrackingManager trackingManager = new IslandTrackingManager();
+    private final IslandTrackingManager trackingManager;
     private DeregisterableListener islandDataHandler = new IslandDataHandler();
 
     private Collection<String> addonNames = Arrays.asList("BSkyblock", "AcidIsland", "CaveBlock");
 
-    private CustomOreGenAddon() {
+
+    private CustomOreGenAddon(Object unused) {
         instance = this;
+        trackingManager = new IslandTrackingManager();
     }
 
-    private CustomOreGenAddon(Object... unused) {
+    private CustomOreGenAddon() {
         Common.setPrefix("&3[CustomOreGen] &d[Addon] &b");
 
         Plugin plugin = Bukkit.getPluginManager().getPlugin("CustomOreGen");
@@ -78,12 +78,23 @@ public final class CustomOreGenAddon extends Addon {
         }
         if (found == null) {
             Common.log(Level.INFO, "&a[Hooks] &eNo Skyblock addon was not found.");
+            trackingManager = new IslandTrackingManager();
             return;
         }
         if (instance == null) {
             registerConfigurationSerialisation();
         }
         instance = this;
+        File file = new File(getDataFolder().getAbsolutePath(), "TrackingManager.yml");
+        try {
+            if (!file.isFile()) {
+                file.createNewFile();
+            }
+        } catch (IOException ex) {
+            Common.log(Level.SEVERE, "&cUnable to load tracking data!");
+            throw new IllegalStateException(ex);
+        }
+        this.trackingManager = loadManager(file).orElse(new IslandTrackingManager());
         loadIslandLevellingManager();
         try {
             loadFiles();
@@ -93,6 +104,10 @@ public final class CustomOreGenAddon extends Addon {
         loadDefaultGenerator();
         setupListeners();
         Common.log(Level.INFO, "&a[Hooks] &bSkyblock features enabled!");
+    }
+
+    public static void setToNullInstance() {
+        instance = nullInstance;
     }
 
     public static YamlConfiguration getDefaults() {
@@ -150,6 +165,7 @@ public final class CustomOreGenAddon extends Addon {
         Common.log(Level.INFO, "&d[Addon] &aLoading complete!");
     }
 
+
     private void disableListeners() {
         islandDataHandler.disable();
     }
@@ -157,13 +173,17 @@ public final class CustomOreGenAddon extends Addon {
     private void registerConfigurationSerialisation() {
         ConfigurationSerialization.registerClass(IslandTracker.class);
         ConfigurationSerialization.registerClass(IslandTemplateMapper.class);
-        ConfigurationSerialization.registerClass(IslandTrackingManager.class);
     }
 
     private void unregisterConfigurationSerialisation() {
         ConfigurationSerialization.unregisterClass(IslandTracker.class);
         ConfigurationSerialization.unregisterClass(IslandTemplateMapper.class);
-        ConfigurationSerialization.unregisterClass(IslandTrackingManager.class);
+    }
+
+    private Optional<IslandTrackingManager> loadManager(File data) {
+        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(data);
+        String json = configuration.getString("ISLAND_LEVEL_MANAGER");
+        return IslandTrackingManager.fromJson(json);
     }
 
     private void loadIslandLevellingManager() {
@@ -173,8 +193,8 @@ public final class CustomOreGenAddon extends Addon {
             if (!data.isFile()) {
                 data.createNewFile();
             }
-            IslandLevelingManager.getInstance().loadFromFile(data);
-        } catch (IOException | InvalidConfigurationException ex) {
+            IslandLevelingManager.getInstance().setTrackerManager(trackingManager);
+        } catch (IOException ex) {
             Common.log(Level.SEVERE, ex.getMessage());
             Common.log(Level.SEVERE, "&cUnable to load Island Leveling Data!");
         }

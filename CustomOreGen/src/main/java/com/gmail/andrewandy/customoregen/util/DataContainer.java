@@ -1,16 +1,36 @@
 package com.gmail.andrewandy.customoregen.util;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.GsonBuilder;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DataContainer implements ConfigurationSerializable {
 
-    private static final Collection<Class<?>> wrappers = Arrays.asList(
+    public static final Type TYPE = new TypeToken<DataContainer>() {
+    }.getType();
+
+    private static final transient Collection<Class<?>> wrappers = Arrays.asList(
             Integer.class, Boolean.class, Byte.class, Short.class, Double.class, Long.class,
             Float.class, Character.class
     );
+    private Map<String, Object> container = new ConcurrentHashMap<>();
+
+    public DataContainer(Map<String, Object> serial) {
+        this.container = new HashMap<>(serial);
+    }
+
+    public DataContainer() {
+
+    }
+
+    public DataContainer(DataContainer other) {
+        Objects.requireNonNull(other);
+        this.container = new ConcurrentHashMap<>(other.container);
+    }
 
     private static boolean isPrimitiveWrapper(Class<?> clazz) {
         if (clazz == null) {
@@ -51,22 +71,6 @@ public class DataContainer implements ConfigurationSerializable {
         }
     }
 
-    private Map<String, Object> container = new ConcurrentHashMap<>();
-
-    public DataContainer(Map<String, Object> serial) {
-        this.container = new HashMap<>(serial);
-    }
-
-    public DataContainer() {
-
-    }
-
-    public DataContainer(DataContainer other) {
-        Objects.requireNonNull(other);
-        this.container = new ConcurrentHashMap<>(other.container);
-    }
-
-
     public static boolean isSupported(Class<?> clazz) {
         if (clazz == null || clazz == Void.class) {
             return false;
@@ -75,6 +79,10 @@ public class DataContainer implements ConfigurationSerializable {
             clazz = clazz.getComponentType();
         }
         return clazz.isPrimitive() || clazz.equals(String.class) || isPrimitiveWrapper(clazz);
+    }
+
+    public static Optional<DataContainer> fromJson(String json) {
+        return Optional.of(new GsonBuilder().create().fromJson(json, TYPE));
     }
 
     public void set(String key, Object object) throws UnsupportedOperationException {
@@ -133,7 +141,6 @@ public class DataContainer implements ConfigurationSerializable {
     public Optional<Integer> getInt(String key) {
         return get(key, int.class);
     }
-
 
     public Optional<int[]> getIntArray(String key) {
         return get(key, int[].class);
@@ -213,6 +220,9 @@ public class DataContainer implements ConfigurationSerializable {
         return ret;
     }
 
+    public String toJson() {
+        return new GsonBuilder().create().toJson(this, TYPE);
+    }
 
     @Override
     public Map<String, Object> serialize() {

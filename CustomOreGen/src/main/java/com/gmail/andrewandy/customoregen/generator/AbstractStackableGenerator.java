@@ -2,10 +2,10 @@ package com.gmail.andrewandy.customoregen.generator;
 
 import com.gmail.andrewandy.corelib.util.Common;
 import com.gmail.andrewandy.customoregen.util.ItemWrapper;
+import com.gmail.andrewandy.customoregen.util.Stackable;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.gmail.andrewandy.customoregen.util.Stackable;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;

@@ -1,14 +1,10 @@
 package com.gmail.andrewandy.customoregen.addon.leveling;
 
+import com.gmail.andrewandy.customoregen.addon.CustomOreGenAddon;
 import com.gmail.andrewandy.customoregen.addon.util.IslandTracker;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
+import com.gmail.andrewandy.customoregen.addon.util.IslandTrackingManager;
 import world.bentobox.bentobox.database.objects.Island;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class IslandLevelingManager {
@@ -16,8 +12,7 @@ public class IslandLevelingManager {
     private static final String GEN_LEVEL_KEY = "GeneratorLevel";
     private static final String MAX_GEN_LEVEL_KEY = "MaxGeneratorLevel";
     private static final IslandLevelingManager instance = new IslandLevelingManager();
-    private Map<String, IslandTracker> trackerRegistry = new HashMap<>();
-    private YamlConfiguration data = new YamlConfiguration();
+    private IslandTrackingManager trackerManager = CustomOreGenAddon.getInstance().getTrackingManager();
 
     private IslandLevelingManager() {
     }
@@ -26,16 +21,12 @@ public class IslandLevelingManager {
         return instance;
     }
 
-    public void save(File file) throws IOException {
-        data.save(file);
-    }
-
-    public void loadFromFile(File file) throws IOException, InvalidConfigurationException {
-        data.load(file);
+    public void setTrackerManager(IslandTrackingManager manager) {
+        trackerManager = manager;
     }
 
     public int getIslandGeneratorLevel(String islandID) {
-        IslandTracker tracker = trackerRegistry.get(Objects.requireNonNull(islandID));
+        IslandTracker tracker = trackerManager.getTracker(Objects.requireNonNull(islandID));
         if (tracker == null) {
             return 0;
         }
@@ -43,7 +34,7 @@ public class IslandLevelingManager {
     }
 
     public int getIslandGeneratorMaxLevel(String islandID) {
-        IslandTracker tracker = trackerRegistry.get(Objects.requireNonNull(islandID));
+        IslandTracker tracker = trackerManager.getTracker(Objects.requireNonNull(islandID));
         if (tracker == null) {
             return 0;
         }
@@ -51,7 +42,7 @@ public class IslandLevelingManager {
     }
 
     public void incrementGeneratorLevel(String islandID) {
-        IslandTracker tracker = trackerRegistry.get(Objects.requireNonNull(islandID));
+        IslandTracker tracker = trackerManager.getTracker(Objects.requireNonNull(islandID));
         if (tracker == null) {
             return;
         }
@@ -62,7 +53,7 @@ public class IslandLevelingManager {
     }
 
     public void decrementGeneratorLevel(String islandID) {
-        IslandTracker tracker = trackerRegistry.get(Objects.requireNonNull(islandID));
+        IslandTracker tracker = trackerManager.getTracker(Objects.requireNonNull(islandID));
         if (tracker == null) {
             return;
         }
@@ -79,6 +70,7 @@ public class IslandLevelingManager {
      * @param maxLevel The new max level of the {@link com.gmail.andrewandy.customoregen.addon.generators.IslandOreGenerator} of this island.
      */
     public void setMaxGeneratorLevel(String islandID, int maxLevel) {
-
+        IslandTracker tracker = trackerManager.getTracker(islandID);
+        tracker.getDataContainer().set(MAX_GEN_LEVEL_KEY, maxLevel);
     }
 }

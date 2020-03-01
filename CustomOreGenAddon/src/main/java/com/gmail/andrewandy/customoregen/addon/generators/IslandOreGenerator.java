@@ -35,6 +35,7 @@ public class IslandOreGenerator extends IslandRegionGenerator {
     public IslandOreGenerator(UUID generatorID) {
         super(generatorID);
         validateHook();
+        manualMaxLevel = super.maxLevel();
         spawnChances = new ArrayList<>(getMaxLevel() + 1);
         spawnChances.add(0, null);
         for (int level = 1; level < maxLevel(); level++) {
@@ -42,6 +43,7 @@ public class IslandOreGenerator extends IslandRegionGenerator {
             setSpawnChances(jsonMapped, level);
         }
         levelUpCost = new double[maxLevel() + 1];
+        manualMaxLevel = super.maxLevel();
     }
 
     public IslandOreGenerator(ItemStack itemStack) {
@@ -51,6 +53,7 @@ public class IslandOreGenerator extends IslandRegionGenerator {
     public IslandOreGenerator(ItemMeta meta) {
         super(meta);
         validateHook();
+        manualMaxLevel = super.maxLevel();
         ItemWrapper wrapper = ItemWrapper.wrap(meta);
         for (int level = 0; level < maxLevel(); level++) {
             String jsonMapped = wrapper.getString(GEN_CHANCE_HELPER_KEY + ":" + level);
@@ -63,6 +66,7 @@ public class IslandOreGenerator extends IslandRegionGenerator {
     public IslandOreGenerator(Island island, int maxLevel, int level) {
         super(island, maxLevel, level);
         validateHook();
+        manualMaxLevel = super.maxLevel();
         levelUpCost = new double[maxLevel() + 1];
         fillSpawnChances(false);
     }
@@ -70,13 +74,16 @@ public class IslandOreGenerator extends IslandRegionGenerator {
     public IslandOreGenerator(Island island, int maxLevel, int level, Priority priority) {
         super(island, maxLevel, level, priority);
         validateHook();
+        manualMaxLevel = super.maxLevel();
         levelUpCost = new double[maxLevel() + 1];
         fillSpawnChances(false);
+
     }
 
     public IslandOreGenerator(String islandID, int maxLevel, int level) {
         super(islandID, maxLevel, level);
         validateHook();
+        manualMaxLevel = super.maxLevel();
         levelUpCost = new double[maxLevel() + 1];
         fillSpawnChances(false);
     }
@@ -84,6 +91,7 @@ public class IslandOreGenerator extends IslandRegionGenerator {
     public IslandOreGenerator(String islandID, int maxLevel, int level, Priority priority) {
         super(islandID, maxLevel, level, priority);
         validateHook();
+        manualMaxLevel = super.maxLevel();
         levelUpCost = new double[maxLevel() + 1];
         fillSpawnChances(false);
     }
@@ -153,6 +161,12 @@ public class IslandOreGenerator extends IslandRegionGenerator {
     }
 
     public GenerationChanceHelper getSpawnChances(int level) {
+        if (level > maxLevel() || level < 1) {
+            throw new IllegalArgumentException("Invalid Level!");
+        }
+        if (spawnChances.size() < level) {
+            spawnChances.add(level, new GenerationChanceHelper());
+        }
         return spawnChances.get(level);
     }
 

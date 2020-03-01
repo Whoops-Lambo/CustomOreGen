@@ -42,7 +42,7 @@ public final class CustomOreGenAddon extends Addon {
     private static CustomOreGenAddon instance;
     private static JavaPlugin bukkitPlugin;
     private static YamlConfiguration defaults;
-    private final IslandTrackingManager trackingManager;
+    private IslandTrackingManager trackingManager;
     private DeregisterableListener islandDataHandler = new IslandDataHandler();
 
     private Collection<String> addonNames = Arrays.asList("BSkyblock", "AcidIsland", "CaveBlock", "SkyGrid");
@@ -54,47 +54,6 @@ public final class CustomOreGenAddon extends Addon {
     }
 
     public CustomOreGenAddon() {
-        Common.setPrefix("&3[CustomOreGen] &d[Addon] &b");
-
-        Plugin plugin = Bukkit.getPluginManager().getPlugin("CustomOreGen");
-        try {
-            Class<?> clazz = com.gmail.andrewandy.customoregen.CustomOreGen.class;
-            if (!clazz.isInstance(plugin)) {
-                Common.log(Level.SEVERE, "&cCustomOreGen main plugin not found!");
-                throw new IllegalStateException();
-            }
-            bukkitPlugin = (JavaPlugin) plugin;
-        } catch (NoClassDefFoundError ex) {
-            Common.log(Level.SEVERE, "&cCustomOreGen main plugin not found!");
-            throw new IllegalStateException();
-        }
-        Addon found = null;
-        for (String addon : addonNames) {
-            Optional<Addon> optionalAddon = BentoBox.getInstance().getAddonsManager().getAddonByName(addon);
-            if (optionalAddon.isPresent()) {
-                found = optionalAddon.get();
-                break;
-            }
-        }
-        if (found == null) {
-            Common.log(Level.INFO, "&a[Hooks] &eNo Skyblock addon was not found.");
-            trackingManager = new IslandTrackingManager();
-            return;
-        }
-        if (instance == null) {
-            registerConfigurationSerialisation();
-        }
-        instance = this;
-        File file = new File(getDataFolder().getAbsolutePath(), "TrackingManager.yml");
-        try {
-            if (!file.isFile()) {
-                file.createNewFile();
-            }
-        } catch (IOException ex) {
-            Common.log(Level.SEVERE, "&cUnable to load tracking data!");
-            throw new IllegalStateException(ex);
-        }
-        this.trackingManager = loadManager(file).orElse(new IslandTrackingManager());
     }
 
     public static void setToNullInstance() {
@@ -136,24 +95,24 @@ public final class CustomOreGenAddon extends Addon {
     }
 
     private void loadFiles() throws IOException {
-        Common.log(Level.INFO, "&d[Addon] &bLoading files.");
+        Common.log(Level.INFO, "&bLoading files.");
         File file = new File(getDataFolder().getAbsolutePath(), "defaults.yml");
         if (!file.isFile()) {
-            Common.log(Level.INFO, "&d[Addon] &aDefaults file not found, creating one now.");
+            Common.log(Level.INFO, "&aDefaults file not found, creating one now.");
             try (InputStream defaultsStream = CustomOreGenAddon.class.getClassLoader().getResourceAsStream("defaults.yml")) {
                 if (defaultsStream == null) {
-                    Common.log(Level.SEVERE, "&d[Addon] &cUnable to load defaults from jar!");
+                    Common.log(Level.SEVERE, "&cUnable to load defaults from jar!");
                     throw new IllegalStateException();
                 }
                 if (!file.createNewFile()) {
-                    Common.log(Level.SEVERE, "&d[Addon] &cUnable to create new file!");
+                    Common.log(Level.SEVERE, "&cUnable to create new file!");
                     throw new IllegalStateException();
                 }
                 FileUtil.copy(defaultsStream, file);
             }
         }
         defaults = YamlConfiguration.loadConfiguration(file);
-        Common.log(Level.INFO, "&d[Addon] &aLoading complete!");
+        Common.log(Level.INFO, "&aFile Loading complete!");
     }
 
 
@@ -174,7 +133,7 @@ public final class CustomOreGenAddon extends Addon {
     private Optional<IslandTrackingManager> loadManager(File data) {
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(data);
         String json = configuration.getString("ISLAND_LEVEL_MANAGER");
-        return IslandTrackingManager.fromJson(json);
+        return json == null ? Optional.empty() : IslandTrackingManager.fromJson(json);
     }
 
     private void loadIslandLevellingManager() {
@@ -212,7 +171,7 @@ public final class CustomOreGenAddon extends Addon {
             return;
         }
         for (int index = 1; index <= maxLevel; index++) {
-            ConfigurationSection level = levelSection.getConfigurationSection("" + index);
+            ConfigurationSection level = levelSection.getConfigurationSection(Integer.toString(index));
             if (level == null) {
                 Common.log(Level.WARNING, "&a[Hooks] &cEmpty Level section found! Skipping...");
                 continue;
@@ -236,7 +195,6 @@ public final class CustomOreGenAddon extends Addon {
 
     @Override
     public void onEnable() {
-        Common.log(Level.INFO, "&aPlugin load started.!");
         loadDefaultGenerator();
         Common.log(Level.INFO, "&a[Hooks] &bSkyblock features enabled!");
     }
@@ -248,6 +206,48 @@ public final class CustomOreGenAddon extends Addon {
 
     @Override
     public void onLoad() {
+        Common.log(Level.INFO, "&aPlugin load started.!");
+        Common.setPrefix("&3[CustomOreGen] &e[Addon]&b");
+
+        Plugin plugin = Bukkit.getPluginManager().getPlugin("CustomOreGen");
+        try {
+            Class<?> clazz = com.gmail.andrewandy.customoregen.CustomOreGen.class;
+            if (!clazz.isInstance(plugin)) {
+                Common.log(Level.SEVERE, "&cCustomOreGen main plugin not found!");
+                throw new IllegalStateException();
+            }
+            bukkitPlugin = (JavaPlugin) plugin;
+        } catch (NoClassDefFoundError ex) {
+            Common.log(Level.SEVERE, "&cCustomOreGen main plugin not found!");
+            throw new IllegalStateException();
+        }
+        Addon found = null;
+        for (String addon : addonNames) {
+            Optional<Addon> optionalAddon = BentoBox.getInstance().getAddonsManager().getAddonByName(addon);
+            if (optionalAddon.isPresent()) {
+                found = optionalAddon.get();
+                break;
+            }
+        }
+        if (found == null) {
+            Common.log(Level.INFO, "&a[Hooks] &eNo Skyblock addon was not found.");
+            trackingManager = new IslandTrackingManager();
+            return;
+        }
+        if (instance == null) {
+            registerConfigurationSerialisation();
+        }
+        instance = this;
+        File file = new File(getDataFolder().getAbsolutePath(), "TrackingManager.yml");
+        try {
+            if (!file.isFile()) {
+                file.createNewFile();
+            }
+        } catch (IOException ex) {
+            Common.log(Level.SEVERE, "&cUnable to load tracking data!");
+            throw new IllegalStateException(ex);
+        }
+        this.trackingManager = loadManager(file).orElse(new IslandTrackingManager());
         loadIslandLevellingManager();
         try {
             loadFiles();
@@ -259,9 +259,23 @@ public final class CustomOreGenAddon extends Addon {
     }
 
     @Override
+    public void onReload() {
+        onDisable();
+        onEnable();
+    }
+
+    @Override
     public void onDisable() {
         unregisterConfigurationSerialisation();
         disableListeners();
+        String json = trackingManager.toJson();
+        YamlConfiguration configuration = new YamlConfiguration();
+        configuration.set("ISLAND_LEVEL_MANAGER", json);
+        try {
+            configuration.save(new File(getDataFolder().getAbsolutePath(), "TrackingManager.yml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Common.log(Level.INFO, "&aCustomOreGenAddon has been disabled.");
     }
 }

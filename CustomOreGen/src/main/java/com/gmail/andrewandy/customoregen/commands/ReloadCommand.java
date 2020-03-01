@@ -3,6 +3,7 @@ package com.gmail.andrewandy.customoregen.commands;
 import com.gmail.andrewandy.corelib.api.command.NestedCommand;
 import com.gmail.andrewandy.corelib.util.Common;
 import com.gmail.andrewandy.customoregen.CustomOreGen;
+import com.gmail.andrewandy.customoregen.events.CustomOreGenReloadEvent;
 import org.bukkit.command.CommandSender;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ public class ReloadCommand extends NestedCommand {
             Common.tell(commandSender, "&cInsufficient Permission!");
             return true;
         }
+        new CustomOreGenReloadEvent();
         try {
             CustomOreGen.loadConfig();
             Common.tell(commandSender, "&3&l[CustomOreGen] &eSettings Reloaded!");

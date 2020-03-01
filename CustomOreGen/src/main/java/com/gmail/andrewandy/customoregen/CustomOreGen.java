@@ -110,6 +110,7 @@ public class CustomOreGen extends JavaPlugin {
         super.onDisable();
         AbstractGenerator.globalUpdateFile();
         Common.log(Level.INFO, "&ePlugin has been disabled.");
+        instance = null;
     }
 
     private void setupAbstractGenerator() {

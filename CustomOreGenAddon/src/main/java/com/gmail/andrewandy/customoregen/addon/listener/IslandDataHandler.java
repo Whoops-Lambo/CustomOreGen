@@ -5,6 +5,7 @@ import com.gmail.andrewandy.customoregen.CustomOreGen;
 import com.gmail.andrewandy.customoregen.addon.CustomOreGenAddon;
 import com.gmail.andrewandy.customoregen.addon.generators.IslandOreGenerator;
 import com.gmail.andrewandy.customoregen.addon.levels.IslandTemplateMapper;
+import com.gmail.andrewandy.customoregen.events.CustomOreGenReloadEvent;
 import com.gmail.andrewandy.customoregen.generator.BlockGenerator;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -28,5 +29,10 @@ public class IslandDataHandler implements DeregisterableListener {
         IslandTemplateMapper.getInstance().unregisterIslandTemplate(island.getUniqueId());
         BlockGenerator generator = CustomOreGenAddon.getInstance().getIslandTracker(island.getUniqueId()).getGenerator();
         CustomOreGen.getGeneratorManager().unregisterGenerator(generator);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onReload(CustomOreGenReloadEvent event) {
+        CustomOreGenAddon.getInstance().onReload();
     }
 }

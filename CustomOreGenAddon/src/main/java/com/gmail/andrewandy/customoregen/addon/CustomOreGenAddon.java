@@ -272,6 +272,7 @@ public final class CustomOreGenAddon extends Addon implements Hook {
         loadSettings();
         setupListeners();
         Common.log(Level.INFO, "&a[Hooks] &bSkyblock features enabled!");
+        com.gmail.andrewandy.customoregen.commands.ReloadCommand.getInstance().registerReloadTask(RELOAD_TASK);
     }
 
 
@@ -292,6 +293,7 @@ public final class CustomOreGenAddon extends Addon implements Hook {
             ex.printStackTrace();
         }
         Common.log(Level.INFO, "&aCustomOreGenAddon has been disabled.");
+        com.gmail.andrewandy.customoregen.commands.ReloadCommand.getInstance().registerReloadTask(RELOAD_TASK);
     }
 
     @Override

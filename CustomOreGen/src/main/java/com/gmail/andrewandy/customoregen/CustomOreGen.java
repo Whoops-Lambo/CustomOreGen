@@ -6,6 +6,7 @@ import com.gmail.andrewandy.customoregen.generator.AbstractGenerator;
 import com.gmail.andrewandy.customoregen.generator.Priority;
 import com.gmail.andrewandy.customoregen.generator.builtins.GenerationChanceHelper;
 import com.gmail.andrewandy.customoregen.generator.builtins.OverworldGenerator;
+import com.gmail.andrewandy.customoregen.hooks.Hooks;
 import com.gmail.andrewandy.customoregen.hooks.economy.VaultHook;
 import com.gmail.andrewandy.customoregen.listener.CobbleGeneratorHandler;
 import com.gmail.andrewandy.customoregen.util.DataContainer;
@@ -24,6 +25,10 @@ import java.io.InputStream;
 import java.util.logging.Level;
 
 public class CustomOreGen extends JavaPlugin {
+
+    static {
+        Hooks.registerHook(new VaultHook());
+    }
 
     private static final String logPrefix = "&3[CustomOreGen]";
     private static final GeneratorManager generatorManager = new GeneratorManager();
@@ -100,7 +105,7 @@ public class CustomOreGen extends JavaPlugin {
         setupAbstractGenerator();
         loadOverworldGenerator();
         setupCobbleHandler();
-        loadHooks();
+        Hooks.onEnable();
         getCommand("CustomOreGen").setExecutor(BaseCommand.getInstance());
         Common.log(Level.INFO, "&bPlugin has been enabled! Took " + (System.currentTimeMillis() - time) + "ms");
     }
@@ -108,6 +113,7 @@ public class CustomOreGen extends JavaPlugin {
     @Override
     public void onDisable() {
         super.onDisable();
+        Hooks.onDisable();
         AbstractGenerator.globalUpdateFile();
         Common.log(Level.INFO, "&ePlugin has been disabled.");
     }
@@ -134,13 +140,6 @@ public class CustomOreGen extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new CobbleGeneratorHandler(), instance);
     }
 
-    private void loadHooks() {
-        if (VaultHook.getInstance() == null) {
-            Common.log(Level.WARNING, "&aPlugin cannot function without vault!");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }
-    }
 
     private void loadUtils() {
         ConfigurationSerialization.registerClass(DataContainer.class);

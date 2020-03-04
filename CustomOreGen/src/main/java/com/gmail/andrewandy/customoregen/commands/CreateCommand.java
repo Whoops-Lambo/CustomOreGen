@@ -11,7 +11,7 @@ public class CreateCommand extends NestedCommand {
     private Menu menu = new ChestMenu(45);
 
     private CreateCommand() {
-        super("create");
+        super("Create");
     }
 
     public static CreateCommand getInstance() {

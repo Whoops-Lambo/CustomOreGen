@@ -4,12 +4,18 @@ import com.gmail.andrewandy.corelib.api.command.NestedCommand;
 import com.gmail.andrewandy.corelib.util.Common;
 import org.bukkit.command.CommandSender;
 
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class HelpCommand extends NestedCommand {
 
     private static HelpCommand instance;
 
     private HelpCommand() {
-        super("help");
+        super("&aHelp");
+        setDescription("&eShows this page.");
     }
 
     public static HelpCommand getInstance() {
@@ -19,12 +25,16 @@ public class HelpCommand extends NestedCommand {
 
     @Override
     public boolean onCommand(CommandSender commandSender, String[] args) {
-        Common.tell(commandSender,
-                "&b&lAvailable Commands: ",
-                "&e - NearMe --> [Displays the number of generators near you]",
-                "&a - Reload --> [Reloads settings.yml]",
-                "&c - Help --> [Shows this menu]",
-                "&b - Save --> [Saves all data to disk]");
+        List<NestedCommand> commands = BaseCommand.getInstance().getSortedNestedCommands(commandSender);
+        String[] messages = new String[commands.size() + 1];
+        int index = 0;
+        messages[index++] = "&b&lAvailable Commands: ";
+        for (NestedCommand cmd : commands) {
+            String message = cmd.getLabel() + " --> " + (cmd.hasDescription() ? "[" + cmd.getDescription() + "]" : "");
+            messages[index++] = message;
+        }
+        Common.tell(commandSender, messages);
         return true;
     }
+
 }

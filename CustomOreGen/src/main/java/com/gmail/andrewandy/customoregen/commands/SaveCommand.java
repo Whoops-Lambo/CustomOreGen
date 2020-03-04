@@ -10,7 +10,8 @@ public class SaveCommand extends NestedCommand {
     private static final SaveCommand instance = new SaveCommand();
 
     private SaveCommand() {
-        super("save", "com.gmail.andrewandy.customoregen.save");
+        super("&cSave", "com.gmail.andrewandy.customoregen.save");
+        setDescription("&eSave all generator data to disk.");
     }
 
     public static SaveCommand getInstance() {
@@ -19,10 +20,6 @@ public class SaveCommand extends NestedCommand {
 
     @Override
     public boolean onCommand(CommandSender commandSender, String[] args) {
-        if (!commandSender.hasPermission(super.getPermission())) {
-            Common.tell(commandSender, "&cInsufficient Permission!");
-            return true;
-        }
         long millis = System.currentTimeMillis();
         AbstractGenerator.globalUpdateFile();
         Common.tell(commandSender, "&3&l[CustomOreGen] &aSaved data, took " + (System.currentTimeMillis() - millis) + "ms");

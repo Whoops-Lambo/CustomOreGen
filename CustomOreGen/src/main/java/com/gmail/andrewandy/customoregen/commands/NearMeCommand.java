@@ -15,7 +15,8 @@ public class NearMeCommand extends NestedCommand {
     private static final NearMeCommand instance = new NearMeCommand();
 
     private NearMeCommand() {
-        super("nearme");
+        super("&bNearMe");
+        setDescription("&aCounts how many generators are active at your current location.");
     }
 
     public static NearMeCommand getInstance() {

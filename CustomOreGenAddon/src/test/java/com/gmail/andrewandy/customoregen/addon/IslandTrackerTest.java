@@ -18,6 +18,10 @@ import java.util.UUID;
 
 public class IslandTrackerTest {
 
+    static {
+        CustomOreGenAddon.setInstance(new CustomOreGenAddon());
+    }
+
     private static final String islandID = UUID.randomUUID().toString();
     private static final IslandTracker islandTracker = new IslandTracker(islandID);
     private static final IslandOreGenerator generator = new IslandOreGenerator(islandID, 10, 5);
@@ -27,7 +31,6 @@ public class IslandTrackerTest {
         CustomOreGenAddon.class.getClassLoader();
         ConfigurationSerialization.registerClass(IslandTracker.class);
         ConfigurationSerialization.registerClass(DataContainer.class);
-        CustomOreGenAddon.setToNullInstance();
         try {
             AbstractGenerator.setDataFile(File.createTempFile("Temp", ".yml"));
         } catch (IOException e) {

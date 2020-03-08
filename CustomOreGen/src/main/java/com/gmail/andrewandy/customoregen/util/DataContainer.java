@@ -20,7 +20,7 @@ public class DataContainer implements ConfigurationSerializable {
     private Map<String, Object> container = new ConcurrentHashMap<>();
 
     public DataContainer(Map<String, Object> serial) {
-        this.container = new HashMap<>(serial);
+        this.container = new ConcurrentHashMap<>(serial);
     }
 
     public DataContainer() {
